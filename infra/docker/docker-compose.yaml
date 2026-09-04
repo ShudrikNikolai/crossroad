@@ -1,0 +1,33 @@
+services:
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: apps/backend/Dockerfile
+    container_name: crossroad-backend
+    environment:
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongo:27017/crossroad
+    depends_on:
+      - mongo
+    ports:
+      - "3001:3001"
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: apps/frontend/Dockerfile
+    container_name: crossroad-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+  mongo:
+    image: mongo:8
+    container_name: crossroad-mongo
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
