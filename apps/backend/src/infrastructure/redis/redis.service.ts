@@ -20,7 +20,7 @@ export class RedisService implements OnModuleDestroy {
 
     this.client = createClient({
       url: redisConfig.url,
-      database: redisConfig.db || 0
+      database: redisConfig.db || 0,
     });
 
     this.client.on('error', (err) => {

@@ -11,7 +11,8 @@ import { ConfigService } from '@/config';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         autoLogging: {
-          ignore: (req: IncomingMessage) => req.url?.startsWith('/api/v1/health'),
+          ignore: (req: IncomingMessage) =>
+            req.url?.startsWith('/api/v1/health'),
         },
         pinoHttp: {
           redact: {

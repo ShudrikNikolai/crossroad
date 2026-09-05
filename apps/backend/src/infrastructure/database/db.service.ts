@@ -4,9 +4,7 @@ import { Connection } from 'mongoose';
 
 @Injectable()
 export class DbService {
-  constructor(
-    @InjectConnection() private connection: Connection,
-  ) {}
+  constructor(@InjectConnection() private connection: Connection) {}
 
   async ping(): Promise<{ status: string; latency: number }> {
     const start = Date.now();
