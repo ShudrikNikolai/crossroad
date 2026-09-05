@@ -4,13 +4,10 @@ import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentation
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-proto';
 
-import {
-  PeriodicExportingMetricReader,
-} from '@opentelemetry/sdk-metrics';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 
 const otlpEndpoint =
-  process.env.OTEL_EXPORTER_OTLP_ENDPOINT ??
-  'http://localhost:4318';
+  process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? 'http://localhost:4318';
 
 const traceExporter = new OTLPTraceExporter({
   url: `${otlpEndpoint}/v1/traces`,
@@ -39,4 +36,8 @@ export const telemetry = new NodeSDK({
   ],
 });
 
-telemetry.start();
+const enabled = process.env.OTEL_ENABLED !== 'false';
+
+if (enabled) {
+  telemetry.start();
+}

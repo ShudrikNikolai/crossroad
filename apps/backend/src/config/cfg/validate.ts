@@ -1,11 +1,15 @@
 import { z } from 'zod';
 
+const booleanFromEnv = z
+  .enum(['true', 'false'])
+  .transform((val) => val === 'true');
+
 export const DbSchema = z.object({
   DB_URI: z.string(),
   DB_NAME: z.string().min(3).max(50),
-  DB_USERNAME: z.string().min(3).max(50).optional(),
-  DB_PASS: z.string().min(3).max(50).optional(),
-  DB_AUTH_SOURCE: z.string().min(3).max(50).optional(),
+  DB_USERNAME: z.string().min(0).max(50).optional(),
+  DB_PASS: z.string().min(0).max(50).optional(),
+  DB_AUTH_SOURCE: z.string().min(0).max(50).optional(),
 });
 
 export const LoggerSchema = z.object({
@@ -22,7 +26,7 @@ export const LoggerSchema = z.object({
 });
 
 export const SwaggerSchema = z.object({
-  SWAGGER_ENABLE: z.coerce.boolean(),
+  SWAGGER_ENABLE: booleanFromEnv,
   SWAGGER_PATH: z.string().min(1),
 });
 
@@ -36,7 +40,8 @@ export const AppSchema = z.object({
   APP_LOCALE: z.string().min(2),
   TZ: z.string().min(1),
   ALLOWED_ORIGIN: z.string().min(1),
-  CREDENTIALS: z.coerce.boolean(),
+  CREDENTIALS: booleanFromEnv,
+  APP_BODY_LIMIT: z.string().min(1),
 });
 
 export const AuthSchema = z.object({
@@ -59,5 +64,5 @@ export const StorageSchema = z.object({
   STORAGE_ACCESS_KEY: z.string().min(1),
   STORAGE_SECRET_KEY: z.string().min(1),
   STORAGE_BUCKET: z.string().min(1),
-  STORAGE_USE_SSL: z.coerce.boolean(),
+  STORAGE_USE_SSL: booleanFromEnv,
 });

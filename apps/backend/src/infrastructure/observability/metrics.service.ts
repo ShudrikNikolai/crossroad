@@ -5,16 +5,27 @@ import { metrics, Counter, Histogram } from '@opentelemetry/api';
 export class MetricsService {
   private readonly meter = metrics.getMeter('crossroad');
 
-  private readonly storyGeneratedCounter =
-    this.meter.createCounter('crossroad.story.generated', {
+  private readonly storyGeneratedCounter = this.meter.createCounter(
+    'crossroad.story.generated',
+    {
       description: 'Number of generated stories',
-    });
+    },
+  );
 
-  private readonly llmRequestDuration =
-    this.meter.createHistogram('crossroad.llm.request.duration', {
+  private readonly llmRequestDuration = this.meter.createHistogram(
+    'crossroad.llm.request.duration',
+    {
       description: 'LLM request duration',
       unit: 'ms',
-    });
+    },
+  );
+
+  private readonly requestTimeoutCounter = this.meter.createCounter(
+    'crossroad.http.request.timeout',
+    {
+      description: 'Number of HTTP requests terminated by timeout',
+    },
+  );
 
   storyGenerated(): void {
     this.storyGeneratedCounter.add(1);
@@ -22,5 +33,9 @@ export class MetricsService {
 
   recordLlmRequestDuration(duration: number): void {
     this.llmRequestDuration.record(duration);
+  }
+
+  requestTimeout(): void {
+    this.requestTimeoutCounter.add(1);
   }
 }

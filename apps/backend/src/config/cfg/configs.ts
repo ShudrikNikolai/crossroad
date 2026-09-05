@@ -15,6 +15,8 @@ const RedisConfig = registerAs(CONST.REDIS, () => {
   return {
     host: parse.REDIS_HOST,
     port: parse.REDIS_PORT,
+    ssl: false,
+    rejectUnauthorized: true,
     password: parse.REDIS_PASSWORD,
     db: parse.REDIS_DATABASE,
     url: `redis://${parse.REDIS_HOST}:${parse.REDIS_PORT}`,
@@ -68,6 +70,7 @@ const AppConfig = registerAs(CONST.APP, () => {
     tz: parsed.TZ,
     origin: parsed.ALLOWED_ORIGIN,
     credentials: parsed.CREDENTIALS,
+    bodyLimit: parsed.APP_BODY_LIMIT,
   };
 });
 
@@ -90,13 +93,15 @@ const StorageConfig = registerAs(CONST.STORAGE, () => {
   const parsed = StorageSchema.parse(process.env);
   return {
     endpoint: parsed.STORAGE_ENDPOINT,
-   port: parsed.STORAGE_PORT,
-   accessKey: parsed.STORAGE_ACCESS_KEY,
-   secretKey: parsed.STORAGE_SECRET_KEY,
-   bucket: parsed.STORAGE_BUCKET,
-   useSSL: parsed.STORAGE_USE_SSL,
-  }
-})
+    port: parsed.STORAGE_PORT,
+    accessKey: parsed.STORAGE_ACCESS_KEY,
+    secretKey: parsed.STORAGE_SECRET_KEY,
+    bucket: parsed.STORAGE_BUCKET,
+    useSSL: parsed.STORAGE_USE_SSL,
+  };
+});
+
+type TStorageConfig = ConfigType<typeof StorageConfig>;
 
 export const Configs = {
   [CONST.REDIS]: RedisConfig,
@@ -105,6 +110,7 @@ export const Configs = {
   [CONST.AUTH]: AuthConfig,
   [CONST.APP]: AppConfig,
   [CONST.DATABASE]: DataBaseConfig,
+  [CONST.STORAGE]: StorageConfig,
 };
 
 export interface IConfigs {
@@ -114,6 +120,7 @@ export interface IConfigs {
   [CONST.AUTH]: TAuthConfig;
   [CONST.APP]: TAppConfig;
   [CONST.DATABASE]: TDataBaseConfig;
+  [CONST.STORAGE]: TStorageConfig;
 }
 
 export type {
@@ -123,4 +130,5 @@ export type {
   TAuthConfig,
   TAppConfig,
   TDataBaseConfig,
+  TStorageConfig,
 };

@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { LoggerModule as LoggerPinoModule } from 'nestjs-pino';
 import { LoggerService } from './logger.service';
 import { IncomingMessage } from 'http';
-import { ConfigService } from '@/config/config.service';
+import { ConfigService } from '@/config';
 
 @Global()
 @Module({
@@ -10,7 +10,18 @@ import { ConfigService } from '@/config/config.service';
     LoggerPinoModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
+        autoLogging: {
+          ignore: (req: IncomingMessage) => req.url?.startsWith('/api/v1/health'),
+        },
         pinoHttp: {
+          redact: {
+            paths: [
+              'req.headers.cookie',
+              'req.headers.authorization',
+              'res.headers["set-cookie"]',
+            ],
+            censor: '[REDACTED]',
+          },
           transport: config.isDev
             ? {
                 target: 'pino-pretty',
@@ -22,17 +33,6 @@ import { ConfigService } from '@/config/config.service';
                 },
               }
             : undefined,
-          customProps: (req: IncomingMessage) => {
-            const headers = req.headers;
-            const traceId =
-              'x-trace-id' in headers
-                ? headers['x-trace-id']
-                : crypto.randomUUID();
-            return {
-              context: 'HTTP',
-              traceId,
-            };
-          },
           serializers: {
             req: (req: IncomingMessage) => ({
               method: req.method,
@@ -48,4 +48,4 @@ import { ConfigService } from '@/config/config.service';
   providers: [LoggerService],
   exports: [LoggerService],
 })
-export class LoggerModule {}
+export class AppLoggerModule {}

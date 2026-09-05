@@ -1,33 +1,70 @@
 services:
-
-  backend:
-    build:
-      context: ../..
-      dockerfile: apps/backend/Dockerfile
-    container_name: crossroad-backend
-    environment:
-      NODE_ENV: production
-      MONGO_URI: mongodb://mongo:27017/crossroad
-    depends_on:
-      - mongo
-    ports:
-      - "3001:3001"
-
-  frontend:
-    build:
-      context: ../..
-      dockerfile: apps/frontend/Dockerfile
-    container_name: crossroad-frontend
-    depends_on:
-      - backend
-    ports:
-      - "3000:3000"
-
   mongo:
     image: mongo:8
-    container_name: crossroad-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - mongo_dev_data:/data/db
+
+  redis:
+    image: redis:8.8-m03-trixie
+    container_name: cr-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+
+  minio:
+    image: minio/minio:latest
+    container_name: cr-minio-dev
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: root
+      MINIO_ROOT_PASSWORD: minio-dev-password
+    volumes:
+      - minio_dev_data:/data
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: cr-otel-collector
+    restart: unless-stopped
+    command:
+      - "--config=/etc/otelcol-contrib/otel-collector.yaml"
+    volumes:
+      - ./otel/otel-collector.yaml:/etc/otelcol-contrib/otel-collector.yaml:ro
+    ports:
+      - "4318:4318"
+      - "8889:8889"
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/jaeger:latest
+    container_name: cr-jaeger
+    restart: unless-stopped
+    ports:
+      - "16686:16686"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: cr-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - prometheus_dev_data:/prometheus
+    depends_on:
+      - otel-collector
 
 volumes:
-  mongo_data:
+  mongo_dev_data:
+  redis_dev_data:
+  minio_dev_data:
+  prometheus_dev_data:

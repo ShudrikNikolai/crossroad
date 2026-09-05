@@ -13,4 +13,4 @@ import { Configs } from './cfg';
   providers: [ConfigService],
   exports: [ConfigService],
 })
-export class ConfigModule {}
+export class AppConfigModule {}

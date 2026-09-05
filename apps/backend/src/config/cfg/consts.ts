@@ -5,5 +5,5 @@ export const CONST = {
   AUTH: 'auth',
   APP: 'app',
   DATABASE: 'database',
-  STORAGE: 'storage'
+  STORAGE: 'storage',
 } as const;

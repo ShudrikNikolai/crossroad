@@ -1,7 +1,7 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
 import { PinoLogger } from 'nestjs-pino';
-import { ConfigService } from '@/config/config.service';
+import { ConfigService } from '@/config';
 
 @Injectable()
 export class RedisService implements OnModuleDestroy {
@@ -20,7 +20,7 @@ export class RedisService implements OnModuleDestroy {
 
     this.client = createClient({
       url: redisConfig.url,
-      database: redisConfig.db || 0,
+      database: redisConfig.db || 0
     });
 
     this.client.on('error', (err) => {

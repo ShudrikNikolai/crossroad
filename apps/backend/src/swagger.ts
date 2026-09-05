@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoggerService } from '@/infra/logger/logger.service';
-import { ConfigService } from '@/config/config.service';
+import { ConfigService } from '@/config';
 
 const setupSwagger = (
   app: INestApplication,

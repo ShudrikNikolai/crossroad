@@ -9,6 +9,7 @@ import type {
   TRedisConfig,
   TSwaggerConfig,
   IConfigs,
+  TStorageConfig,
 } from './cfg';
 
 @Injectable()
@@ -37,6 +38,10 @@ export class ConfigService {
 
   get auth(): TAuthConfig {
     return this.getOrThrow(CONST.AUTH);
+  }
+
+  get storage(): TStorageConfig {
+    return this.getOrThrow(CONST.STORAGE);
   }
 
   get isDev(): boolean {

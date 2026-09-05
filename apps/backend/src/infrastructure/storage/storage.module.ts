@@ -1,10 +1,8 @@
-import { Global } from "@nestjs/common";
-import Module from "module";
-import { MinioClient } from "./minio/minio.client";
-import { MinioStorage } from "./minio/minio.storage";
-import { STORAGE } from "./storage.const";
-import { StorageService } from "./storage.service";
-
+import { Global, Module } from '@nestjs/common';
+import { MinioClient } from './minio/minio.client';
+import { MinioStorage } from './minio/minio.storage';
+import { STORAGE } from './storage.const';
+import { StorageService } from './storage.service';
 
 @Global()
 @Module({

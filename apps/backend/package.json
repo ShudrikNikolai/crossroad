@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@crossroad/schemas": "workspace:*",
+    "@crossroad/types": "workspace:*",
     "@nestjs/axios": "^12.0.0",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.0",
@@ -40,6 +41,7 @@
     "axios": "^1.20.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
+    "minio": "^8.0.7",
     "mongoose": "^9.9.4",
     "nestjs-pino": "^5.1.0",
     "nestjs-zod": "^5.5.0",
