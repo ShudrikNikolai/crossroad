@@ -10,19 +10,16 @@ export const UpdateUserSchema = z.object({
       'Username can only contain letters, numbers, underscores and hyphens',
     )
     .optional(),
-
   country: z
     .string()
     .min(2, 'Country must be at least 2 characters long')
     .max(64, 'Country must not exceed 64 characters')
     .optional(),
-
   city: z
     .string()
     .min(2, 'City must be at least 2 characters long')
     .max(64, 'City must not exceed 64 characters')
     .optional(),
-
   birthDate: z
     .union([
       z

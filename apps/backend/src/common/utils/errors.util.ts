@@ -20,5 +20,7 @@ export const API_AUTH_ERROR = {
   INVALID_OR_EXPIRED_TOKEN: 'Invalid or expired token',
   MISSING_TOKEN: 'Authentication token is missing',
   INSUFFICIENT_PERMISSIONS: 'Insufficient permissions',
-  USER_NOT_FOUND: 'user not found'
+  USER_NOT_FOUND: 'user not found',
+  USER_ALREADY_EXISTS: 'user is exists',
+  INVALID_CREDENTIALS: 'invalid credentials',
 };

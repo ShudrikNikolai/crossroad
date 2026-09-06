@@ -8,7 +8,10 @@ import { Types } from 'mongoose';
 export class SecurityService {
   constructor(private readonly repository: SecurityRepository) {}
 
-  async createPassword(userId: Types.ObjectId, password: string): Promise<void> {
+  async createPassword(
+    userId: Types.ObjectId,
+    password: string,
+  ): Promise<void> {
     const passwordHash = await bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
 
     await this.repository.create({

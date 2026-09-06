@@ -1,8 +1,7 @@
 export interface JwtPayload {
-  sub: string | number;
-  id?: string;
+  sub: string;
   jti?: string;
+  type: 'access' | 'refresh';
   iat?: number;
   exp?: number;
-  type: 'access' | 'refresh' | 'reset' | 'verify';
 }

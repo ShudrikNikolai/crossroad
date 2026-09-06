@@ -14,7 +14,10 @@ export class SecurityRepository {
     return this.model.findOne({ userId }).exec();
   }
 
-  async create(data: {userId: Types.ObjectId, passwordHash: string}): Promise<SecurityDocument> {
+  async create(data: {
+    userId: Types.ObjectId;
+    passwordHash: string;
+  }): Promise<SecurityDocument> {
     return this.model.create(data);
   }
 }
