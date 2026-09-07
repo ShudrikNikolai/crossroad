@@ -11,6 +11,7 @@ export class UserAdapter implements IUserPort {
     private readonly securityService: SecurityService,
   ) {}
 
+  // Возвращать интерфес, ан е контракт TODO
   async findById(id: string): Promise<UserAuthView | null> {
     return this.userService.findById(id);
   }

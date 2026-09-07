@@ -1,3 +1,3 @@
-export * from './login.schema'
-export * from './refresh-token.schema'
-export * from './register.schema'
+export * from './login.schema.js'
+export * from './refresh-token.schema.js'
+export * from './register.schema.js'

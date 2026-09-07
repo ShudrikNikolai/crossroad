@@ -11,9 +11,9 @@ import { ConfigService } from '@/config';
 import { EventService } from '@/infrastructure/event/event.service';
 import { Tokens } from '../interfaces';
 import { API_AUTH_ERROR } from '@/common';
-import { TCreateUserSchema } from '@crossroad/schemas';
 import { UserAdapter } from '../adapters/user.adapter';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
+import { IRegisterUser } from '../dtos';
 
 @Injectable()
 export class AuthService {
@@ -24,9 +24,10 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly eventService: EventService,
   ) {}
-
+  // TODO избавиться от UserAuthView и в интерфейсе AuthRequest
   async login(email: string, password: string): Promise<Tokens> {
     const user = await this.userAdapter.findByEmail(email);
+    // TODO объеденить в одну функцию, хуйня два запроса слать.
     if (!user) {
       throw new UnauthorizedException(API_AUTH_ERROR.INVALID_CREDENTIALS);
     }
@@ -39,7 +40,14 @@ export class AuthService {
     return this.generateTokens(user);
   }
 
-  async register(data: TCreateUserSchema): Promise<UserAuthView> {
+  async register(rawData: IRegisterUser): Promise<UserAuthView> {
+    const data = {
+      // TODO фиксануть этот хардкод
+      email: rawData.email,
+      username: rawData.username,
+      password: rawData.password,
+      authMethod: 'email' as const,
+    };
     const user = await this.userAdapter.createUser(data);
 
     if (!user) {
@@ -70,7 +78,7 @@ export class AuthService {
 
   private async generateTokens(user: UserAuthView): Promise<Tokens> {
     const refreshJti = randomUUID();
-
+    // TODO обернуть в промис
     const accessToken = await this.jwtService.signAsync(
       {
         sub: user.id,

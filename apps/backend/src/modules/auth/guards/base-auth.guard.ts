@@ -1,6 +1,5 @@
 import { Type, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard, IAuthGuard } from '@nestjs/passport';
-
 import { API_AUTH } from '../consts';
 
 export function createAuthGuard(strategy: string | string[]): Type<IAuthGuard> {

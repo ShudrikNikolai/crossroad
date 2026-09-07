@@ -6,8 +6,7 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get()
-  async getProfile(@Param('id') userId: string) {
-    // todo string - objectId
-    return this.profileService.findByUserId(userId);
+  async getProfile(@Param('id') profleId: string) {
+    return this.profileService.findById(profleId);
   }
 }

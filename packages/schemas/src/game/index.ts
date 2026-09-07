@@ -1,2 +1,2 @@
-export * from './create-game.schema';
-export * from './update-game-next-step.schema';
+export * from './create-game.schema.js';
+export * from './update-game-next-step.schema.js';

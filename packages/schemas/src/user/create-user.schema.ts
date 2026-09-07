@@ -8,7 +8,6 @@ export const CreateUserSchema = z.object({
     .max(64, 'Email must not exceed 64 characters')
     .toLowerCase()
     .transform((email) => email.toLowerCase().trim()),
-
   username: z
     .string()
     .min(3, 'Username must be at least 3 characters long')
@@ -17,7 +16,6 @@ export const CreateUserSchema = z.object({
       /^[a-zA-Z0-9_-]+$/,
       'Username can only contain letters, numbers, underscores and hyphens',
     ),
-
   password: z
     .string()
     .min(8, 'Password must be at least 8 characters long')
@@ -29,7 +27,6 @@ export const CreateUserSchema = z.object({
       /[!@#$%^&*(),.?":{}|<>]/,
       'Password must contain at least one special character',
     ),
-
   authMethod: z.enum(['oauth', 'email']).default('email'),
 });
 

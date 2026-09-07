@@ -9,12 +9,14 @@ import type { UserCreatedEvent } from '@/infrastructure/event/events/user-create
 
 @Injectable()
 export class UserService implements IUserPort {
+  // вынести в адаптер
   constructor(
     private readonly repository: UserRepository,
     private readonly serviceProfile: ProfileService,
     private readonly serviceSecurity: SecurityService,
     private readonly eventService: EventService,
   ) {}
+
   verifyPassword(userId: string, password: string): Promise<boolean> {
     return this.serviceSecurity.verifyPassword(userId, password);
   }

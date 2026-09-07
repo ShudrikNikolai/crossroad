@@ -1,2 +1,2 @@
-export * from './create-edge.schema'
-export * from './update-edge.schema'
+export * from './create-edge.schema.js'
+export * from './update-edge.schema.js'

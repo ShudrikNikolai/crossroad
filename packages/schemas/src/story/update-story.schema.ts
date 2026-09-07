@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CreateStorySchema } from './create-story.schema';
+import { CreateStorySchema } from './create-story.schema.js';
 
 export const StoryStatusSchema = z.enum(['draft', 'published']);
 

@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { StatisticDocument, StatisticModel } from '../models/statistic.model';
+import { BaseRepository } from '@/common';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
-export class StatisticRepository {
+export class StatisticRepository extends BaseRepository<StatisticDocument> {
   constructor(
     @InjectModel(StatisticModel.name)
-    private readonly model: Model<StatisticDocument>,
-  ) {}
-
-  async create(data: Partial<StatisticModel>): Promise<StatisticDocument> {
-    return this.model.create(data);
+    model: Model<StatisticDocument>,
+  ) {
+    super(model);
   }
 }

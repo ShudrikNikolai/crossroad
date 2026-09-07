@@ -7,3 +7,4 @@ export const API_AUTH = {
     INVALID: 'Invalid or expired token',
   },
 };
+export const PASSWORD_SALT_ROUNDS = 12 as const;

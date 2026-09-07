@@ -1,10 +1,8 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
-
 import { AuthService } from '../auth/auth.service';
-import { Public } from '../decorators';
-import { JwtAuthGuard, RefreshTokenGuard } from '../guards';
-import type { AuthRequest, RefreshAuthRequest } from '../interfaces';
-import type { TCreateUserSchema, TLoginSchema } from '@crossroad/schemas';
+import { CurrentUser, Public } from '../decorators';
+import { RefreshTokenGuard } from '../guards';
+import { RegisterUserDto, LoginDto, RefreshTokenDto } from '../dtos';
 
 @Controller('auth')
 export class AuthController {
@@ -12,29 +10,28 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  async register(@Body() data: TCreateUserSchema) {
+  async register(@Body() data: RegisterUserDto) {
     return this.authService.register(data);
   }
 
   @Public()
   @Post('login')
-  async login(@Body() data: TLoginSchema) {
+  async login(@Body() data: LoginDto) {
     return this.authService.login(data.email, data.password);
   }
 
   @Public()
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
-  async refresh(@Req() request: RefreshAuthRequest) {
-    return this.authService.refresh(
-      request.user.userId,
-      request.user.refreshTokenId,
-    );
+  async refresh(
+    @CurrentUser('id') userId: string,
+    @Body() data: RefreshTokenDto,
+  ) {
+    return this.authService.refresh(userId, data.refreshToken);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Req() request: RefreshAuthRequest): Promise<void> {
-    await this.authService.logout(request.user.refreshTokenId);
+  async logout(@CurrentUser('id') userId: string): Promise<void> {
+    await this.authService.logout(userId);
   }
 }

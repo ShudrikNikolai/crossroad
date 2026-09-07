@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ProfileDocument, ProfileModel } from './profile.model';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
+import { BaseRepository } from '@/common';
 
 @Injectable()
-export class ProfileRepository {
+export class ProfileRepository extends BaseRepository<ProfileDocument> {
   constructor(
     @InjectModel(ProfileModel.name)
-    private readonly model: Model<ProfileDocument>,
-  ) {}
-
-  async findByUserId(userId: Types.ObjectId): Promise<ProfileDocument | null> {
-    return this.model.findOne({ userId }).exec();
+    model: Model<ProfileDocument>,
+  ) {
+    super(model);
   }
 
-  async create(data: Partial<ProfileModel>): Promise<ProfileDocument> {
-    return this.model.create(data);
+  async findByUserId(userId: string): Promise<ProfileDocument | null> {
+    return this.model.findOne({ userId }).exec();
   }
 }

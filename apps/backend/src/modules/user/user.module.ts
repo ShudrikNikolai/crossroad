@@ -31,22 +31,14 @@ import { Module } from '@nestjs/common';
       },
     ]),
   ],
-
   controllers: [UserController, ProfileController, SecurityController],
-
   providers: [
-    // user
     UserService,
     UserRepository,
-
-    // profile
     ProfileService,
     ProfileRepository,
-
-    // security
     SecurityService,
     SecurityRepository,
-
     // ports
     {
       provide: USER_PORT,

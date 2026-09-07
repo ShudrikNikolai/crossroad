@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { Types } from 'mongoose';
 import { RefreshTokenRepository } from './refresh-token.repository';
 import { RefreshTokenDocument } from './refresh-token.model';
+import { bcryptCompare, bcryptHash } from '@/common';
 
 @Injectable()
 export class RefreshTokenService {
@@ -14,7 +14,7 @@ export class RefreshTokenService {
     token: string,
     expiresAt: Date,
   ): Promise<RefreshTokenDocument> {
-    const tokenHash = await bcrypt.hash(token, 12);
+    const tokenHash = await bcryptHash(token);
 
     return this.repository.create({
       userId: new Types.ObjectId(userId),
@@ -37,7 +37,7 @@ export class RefreshTokenService {
       return false;
     }
 
-    return bcrypt.compare(token, refreshToken.tokenHash);
+    return bcryptCompare(token, refreshToken.tokenHash);
   }
 
   async revoke(jti: string): Promise<void> {

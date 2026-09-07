@@ -1,2 +1,2 @@
-export * from './create-variable.schema'
-export * from './update-variable.schema'
+export * from './create-variable.schema.js'
+export * from './update-variable.schema.js'

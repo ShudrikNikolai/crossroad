@@ -1,3 +1,3 @@
-export * from './create-user.schema'
-export * from './get-user.schema'
-export * from './user-update.schema'
+export * from './create-user.schema.js'
+export * from './get-user.schema.js'
+export * from './user-update.schema.js'

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CreateNodeSchema } from './create-node.schema';
+import { CreateNodeSchema } from './create-node.schema.js';
 
 export const UpdateNodeSchema = CreateNodeSchema.omit({
   storyId: true,

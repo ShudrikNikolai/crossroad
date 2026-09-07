@@ -1,1 +1,1 @@
-export * from './req-llm.schema'
+export * from './req-llm.schema.js'

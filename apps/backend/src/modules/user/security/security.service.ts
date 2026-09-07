@@ -1,9 +1,8 @@
-import * as bcrypt from 'bcrypt';
-import { PASSWORD_SALT_ROUNDS } from '../consts';
 import { Injectable } from '@nestjs/common';
 import { SecurityRepository } from './security.repository';
 import { Types } from 'mongoose';
-
+import { bcryptCompare, bcryptHash } from '@/common';
+// Types.ObjectId( TODO к одному формату
 @Injectable()
 export class SecurityService {
   constructor(private readonly repository: SecurityRepository) {}
@@ -12,7 +11,7 @@ export class SecurityService {
     userId: Types.ObjectId,
     password: string,
   ): Promise<void> {
-    const passwordHash = await bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
+    const passwordHash = await bcryptHash(password);
 
     await this.repository.create({
       userId,
@@ -29,6 +28,6 @@ export class SecurityService {
       return false;
     }
 
-    return bcrypt.compare(password, security.passwordHash);
+    return bcryptCompare(password, security.passwordHash);
   }
 }
