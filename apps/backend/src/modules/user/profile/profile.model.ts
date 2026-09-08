@@ -37,6 +37,23 @@ export class ProfileModel extends BaseModel {
 
   @Prop()
   avatarKey?: string;
+
+  @Prop()
+  avatarUrl?: string;
+
+  @Prop({ type: [String], default: ['ru'] })
+  languages?: string[];
+
+  @Prop({ default: false })
+  isPublic: boolean;
+
+  @Prop({ type: Object, default: {} })
+  socialLinks?: {
+    twitter?: string;
+    github?: string;
+    linkedin?: string;
+    telegram?: string;
+  };
 }
 
 export const ProfileSchema = SchemaFactory.createForClass(ProfileModel);

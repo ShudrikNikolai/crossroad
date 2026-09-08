@@ -21,6 +21,9 @@ export class SecurityModel extends BaseModel {
     required: true,
   })
   passwordHash: string;
+
+  @Prop({ type: [String], default: [] })
+  previousPasswords?: string[];
 }
 
 export const SecuritySchema = SchemaFactory.createForClass(SecurityModel);

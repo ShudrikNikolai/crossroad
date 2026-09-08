@@ -18,6 +18,15 @@ export class UserModel extends BaseModel {
   })
   email: string;
 
+  @Prop()
+  phoneNumber?: string;
+
+  @Prop({ type: Date })
+  lastLoginAt?: Date;
+
+  @Prop({ type: Date })
+  lastActivityAt?: Date;
+
   @Prop({
     required: true,
     default: true,
