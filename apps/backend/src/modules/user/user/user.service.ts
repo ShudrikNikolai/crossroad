@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { IUserPort, UserAuthView } from '../ports/user.port';
+import { IUserAuthPort } from '../facades/user.facade';
 import { UserRepository } from './user.repository';
-import { TCreateUserSchema } from '@crossroad/schemas';
+import {
+  TCreateUserSchema,
+  TUpdateUserEmailSchema,
+  TUpdateUserPhoneNumberSchema,
+} from '@crossroad/schemas';
 import { ProfileService } from '../profile/profile.service';
 import { SecurityService } from '../security/security.service';
 import { EventService } from '@/infrastructure/event/event.service';
 import type { UserCreatedEvent } from '@/infrastructure/event/events/user-created.event';
+import { IUserPublic } from '../dtos';
 
 @Injectable()
-export class UserService implements IUserPort {
-  // вынести в адаптер
+export class UserService implements IUserAuthPort {
   constructor(
     private readonly repository: UserRepository,
     private readonly serviceProfile: ProfileService,
@@ -21,7 +25,7 @@ export class UserService implements IUserPort {
     return this.serviceSecurity.verifyPassword(userId, password);
   }
 
-  async findById(id: string): Promise<UserAuthView | null> {
+  async findById(id: string): Promise<IUserPublic | null> {
     const user = await this.repository.findById(id);
 
     if (!user) {
@@ -34,7 +38,7 @@ export class UserService implements IUserPort {
     };
   }
 
-  async findByEmail(email: string): Promise<UserAuthView | null> {
+  async findByEmail(email: string): Promise<IUserPublic | null> {
     const user = await this.repository.findByEmail(email);
 
     if (!user) {
@@ -47,7 +51,7 @@ export class UserService implements IUserPort {
     };
   }
 
-  async createUser(data: TCreateUserSchema): Promise<UserAuthView | null> {
+  async createUser(data: TCreateUserSchema): Promise<IUserPublic | null> {
     const user = await this.repository.create({
       email: data.email,
       isActive: true,
@@ -67,5 +71,21 @@ export class UserService implements IUserPort {
       id: user._id.toString(),
       email: user.email,
     };
+  }
+
+  async updatePhoneNumber(
+    id: string,
+    data: TUpdateUserPhoneNumberSchema,
+  ): Promise<boolean> {
+    const updPhone = await this.repository.updateById(id, data);
+    return !!updPhone;
+  }
+
+  async updateEmail(
+    id: string,
+    data: TUpdateUserEmailSchema,
+  ): Promise<boolean> {
+    const updEmail = await this.repository.updateById(id, data);
+    return !!updEmail;
   }
 }

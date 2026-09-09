@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { VariableTypeSchema } from './create-variable.schema.js';
+import { VariableTypeSchema } from './create.schema.js';
 
 // key и storyId неизменяемы после создания — переименование переменной
 // сломает все edge.conditions, которые на неё ссылаются

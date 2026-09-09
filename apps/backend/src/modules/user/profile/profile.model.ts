@@ -54,6 +54,29 @@ export class ProfileModel extends BaseModel {
     linkedin?: string;
     telegram?: string;
   };
+
+  toPublic(): Partial<this> {
+    return {
+      _id: this?._id?.toString(),
+      username: this.username,
+      displayName: this.displayName,
+      bio: this.bio,
+      avatarKey: this.avatarKey,
+      avatarUrl: this.avatarUrl,
+      languages: this.languages,
+      socialLinks: this.socialLinks,
+      createdAt: this.createdAt,
+    };
+  }
+
+  toPrivate(): Partial<this> {
+    return {
+      ...this.toPublic(),
+      userId: this.userId?.toString(),
+      isPublic: this.isPublic,
+      updatedAt: this.updatedAt,
+    };
+  }
 }
 
 export const ProfileSchema = SchemaFactory.createForClass(ProfileModel);

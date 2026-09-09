@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import type { TCreateUserSchema } from '@crossroad/schemas';
-import { IUserPort, UserAuthView } from '@/modules/user/ports/user.port';
+import {
+  IUserAuthPort,
+  UserAuthView,
+} from '@/modules/user/facades/user.facade';
 import { UserService } from '@/modules/user/user/user.service';
 import { SecurityService } from '@/modules/user/security/security.service';
 
 @Injectable()
-export class UserAdapter implements IUserPort {
+export class UserAuthAdapter implements IUserAuthPort {
   constructor(
     private readonly userService: UserService,
     private readonly securityService: SecurityService,

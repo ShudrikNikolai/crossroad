@@ -1,21 +1,12 @@
+import { EMAIL_VALIDATION, PASSWORD_VALIDATION, USERNAME_VALIDATION } from '@/shared/validation.constants.js';
 import { z } from 'zod';
 
 export const StrictRegisterSchema = z
   .object({
-    email: z.string().email('Invalid email format'),
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters long')
-      .max(100, 'Password must not exceed 100 characters')
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-      ),
+    email: EMAIL_VALIDATION,
+    password: PASSWORD_VALIDATION,
     confirmPassword: z.string().min(8),
-    username: z
-      .string()
-      .min(2, 'Username must be at least 2 characters long')
-      .max(255, 'Username must not exceed 255 characters'),
+    username: USERNAME_VALIDATION,
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",

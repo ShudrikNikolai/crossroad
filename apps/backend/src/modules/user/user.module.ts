@@ -2,7 +2,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ProfileController } from './controllers/profile.controller';
 import { SecurityController } from './controllers/security.controller';
 import { UserController } from './controllers/user.controller';
-import { USER_PORT } from './ports/user.port';
+import { USER_FACADE } from './facades/user.facade';
 import { ProfileModel, ProfileSchema } from './profile/profile.model';
 import { ProfileRepository } from './profile/profile.repository';
 import { ProfileService } from './profile/profile.service';
@@ -39,13 +39,13 @@ import { Module } from '@nestjs/common';
     ProfileRepository,
     SecurityService,
     SecurityRepository,
-    // ports
+    // public api
     {
-      provide: USER_PORT,
+      provide: USER_FACADE,
       useExisting: UserService,
     },
   ],
 
-  exports: [UserService, ProfileService, SecurityService, USER_PORT],
+  exports: [USER_FACADE],
 })
 export class UserModule {}

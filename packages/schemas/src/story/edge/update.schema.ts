@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CreateEdgeSchema } from './create-edge.schema.js';
+import { CreateEdgeSchema } from './create.schema.js';
 
 export const UpdateEdgeSchema = CreateEdgeSchema.omit({
   storyId: true,

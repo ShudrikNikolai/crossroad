@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from '../user/user.module';
-import { UserAdapter } from './adapters/user.adapter';
+import { UserAuthAdapter } from './adapters/user.adapter';
 import { JwtAuthGuard, RefreshTokenGuard } from './guards';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/refresh-token.strategy';
@@ -31,7 +31,7 @@ import { RefreshTokenRepository } from './refresh-token/refresh-token.repository
   controllers: [AuthController],
   providers: [
     AuthService,
-    UserAdapter,
+    UserAuthAdapter,
     RefreshTokenRepository,
     RefreshTokenService,
     JwtStrategy,
