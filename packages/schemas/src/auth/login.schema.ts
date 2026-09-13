@@ -1,4 +1,4 @@
-import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from '@/shared/validation.constants.js';
+import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from '../shared/validation.constants.js';
 import { z } from 'zod';
 
 export const LoginSchema = z

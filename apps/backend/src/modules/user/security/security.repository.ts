@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SecurityDocument, SecurityModel } from './security.model';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { BaseRepository } from '@/common';
 
 @Injectable()
@@ -13,7 +13,31 @@ export class SecurityRepository extends BaseRepository<SecurityDocument> {
     super(model);
   }
 
-  async findByUserId(userId: Types.ObjectId): Promise<SecurityDocument | null> {
+  async createSecurity(
+    uId: string,
+    passwordHash: string,
+  ): Promise<SecurityDocument | null> {
+    const userId = this.toObjectId(uId);
+    return this.model.create({ userId, passwordHash });
+  }
+
+  async findByUserId(uId: string): Promise<SecurityDocument | null> {
+    const userId = this.toObjectId(uId);
     return this.model.findOne({ userId }).exec();
+  }
+
+  async updateSecurity(
+    uId: string,
+    passwordHash: string,
+  ): Promise<SecurityDocument | null> {
+    const userId = this.toObjectId(uId);
+    return this.model.findOneAndUpdate(
+      {
+        userId,
+      },
+      {
+        passwordHash,
+      },
+    );
   }
 }

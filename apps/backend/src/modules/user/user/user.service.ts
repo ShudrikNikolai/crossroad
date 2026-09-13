@@ -58,8 +58,8 @@ export class UserService implements IUserAuthPort {
     });
 
     await Promise.all([
-      this.serviceSecurity.createPassword(user._id, data.password),
-      this.serviceProfile.create(user._id, data.username),
+      this.serviceSecurity.createPassword(user._id.toString(), data.password),
+      this.serviceProfile.create(user._id.toString(), data.username),
     ]);
 
     await this.eventService.emitAsync<UserCreatedEvent>('user.created', {

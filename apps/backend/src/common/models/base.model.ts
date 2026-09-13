@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export abstract class BaseModel {
   _id: Types.ObjectId;

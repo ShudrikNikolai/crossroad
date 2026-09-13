@@ -1,4 +1,4 @@
-import { PASSWORD_VALIDATION } from '@/shared/validation.constants.js';
+import { PASSWORD_VALIDATION } from '../../shared/validation.constants.js';
 import { z } from 'zod';
 
 export const SecurityUpdatePasswordSchema = z.object({

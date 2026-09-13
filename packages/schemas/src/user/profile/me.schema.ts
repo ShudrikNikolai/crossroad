@@ -3,7 +3,7 @@ import {
   USERNAME_VALIDATION,
   URL_VALIDATION,
   OBJECTID_VALIDATION
-} from '@/shared/validation.constants.js';
+} from '../../shared/validation.constants.js';
 
 // Схема для соц ссылок
 export const SocialLinksSchema = z.object({

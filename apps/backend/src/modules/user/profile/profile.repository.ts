@@ -16,4 +16,28 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
   async findByUserId(userId: string): Promise<ProfileDocument | null> {
     return this.model.findOne({ userId }).exec();
   }
+
+  async createProfile(uId: string, username: string): Promise<void> {
+    const userId = this.toObjectId(uId);
+    await this.model.create({
+      userId,
+      username,
+    });
+  }
+
+  async findPublicProfile(_id: string): Promise<ProfileDocument | null> {
+    return this.model.findOne({
+      _id,
+      isPublic: true,
+    });
+  }
+
+  async updateByUserId(uId: string, data: Omit<Partial<ProfileDocument>, '_id'>): Promise<ProfileDocument | null> {
+    const userId = this.toObjectId(uId);
+    return this.model.findOneAndUpdate({
+      userId
+    }, {
+      ...data
+    })
+  }
 }

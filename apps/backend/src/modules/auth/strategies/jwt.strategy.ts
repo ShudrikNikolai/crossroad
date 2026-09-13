@@ -3,7 +3,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../interfaces';
-import { UserAdapter } from '../adapters/user.adapter';
+import { UserAuthAdapter } from '../adapters/user.adapter';
 import { AUTH } from '../consts';
 import { API_AUTH_ERROR } from '@/common';
 
@@ -11,7 +11,7 @@ import { API_AUTH_ERROR } from '@/common';
 export class JwtStrategy extends PassportStrategy(Strategy, AUTH.JWT) {
   constructor(
     private readonly configService: ConfigService,
-    private readonly userAdapter: UserAdapter,
+    private readonly userAdapter: UserAuthAdapter,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([

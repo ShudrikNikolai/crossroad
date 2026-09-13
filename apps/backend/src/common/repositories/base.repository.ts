@@ -1,4 +1,4 @@
-import mongoose, { Model, HydratedDocument } from 'mongoose';
+import mongoose, { Model, HydratedDocument, Types } from 'mongoose';
 
 type QueryFilter<T> = mongoose.QueryFilter<T>;
 type UpdateQuery<T> = mongoose.UpdateQuery<T>;
@@ -12,7 +12,7 @@ export abstract class BaseRepository<T> {
   }
 
   async findById(
-    id: string | mongoose.Types.ObjectId,
+    id: string,
     options?: QueryOptions<T>,
   ): Promise<HydratedDocument<T> | null> {
     if (this.isValid(id)) return null;
@@ -131,6 +131,10 @@ export abstract class BaseRepository<T> {
       this.model.countDocuments(scopedFilter),
     ]);
     return { items, total, page, pages: Math.ceil(total / limit) };
+  }
+
+  toObjectId(id: string): Types.ObjectId {
+    return new Types.ObjectId(id);
   }
 
   private isValid(id: string | mongoose.Types.ObjectId): boolean {

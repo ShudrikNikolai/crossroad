@@ -1,4 +1,4 @@
-import { EMAIL_VALIDATION, PHONE_VALIDATION } from '@/shared/validation.constants.js';
+import { EMAIL_VALIDATION, PHONE_VALIDATION } from '../../shared/validation.constants.js';
 import { z } from 'zod';
 
 export const UpdateUserPhoneNumberSchema = z.object({

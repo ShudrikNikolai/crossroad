@@ -7,7 +7,7 @@ import { CurrentUser } from '@/modules/auth/decorators';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Patch()
+  @Patch('email')
   async updateEmail(
     @CurrentUser('id') id: string,
     @Body() data: UpdateUserEmailDto,
@@ -15,7 +15,7 @@ export class UserController {
     return this.userService.updateEmail(id, data);
   }
 
-  @Patch()
+  @Patch('phone')
   async updatePhoneNumber(
     @CurrentUser('id') id: string,
     @Body() data: UpdateUserPhoneNumberDto,

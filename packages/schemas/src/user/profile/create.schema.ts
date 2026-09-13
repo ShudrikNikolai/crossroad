@@ -1,4 +1,4 @@
-import { USERNAME_VALIDATION } from "@/shared/validation.constants.js";
+import { USERNAME_VALIDATION } from "../../shared/validation.constants.js";
 import z from "zod";
 
 export const CreateProfileSchema = z.object({
