@@ -11,9 +11,13 @@
   "dependencies": {
     "@crossroad/schemas": "workspace:*",
     "@crossroad/types": "workspace:*",
+    "@heroui/react": "^3.2.5",
+    "@heroui/styles": "^3.2.5",
+    "axios": "^1.20.0",
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -24,6 +28,5 @@
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "packageManager": "pnpm@11.25.0"
+  }
 }
