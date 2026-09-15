@@ -1,11 +1,2 @@
 @import "tailwindcss";
 @import "@heroui/styles";
-
-html,
-body {
-  min-height: 100%;
-}
-
-body {
-  min-height: 100vh;
-}
