@@ -1,3 +1,9 @@
+export interface AuthUser {
+  id: string;
+  email: string;
+  username: string;
+}
+
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
@@ -6,4 +12,10 @@ export interface AuthTokens {
   refreshExpiresIn: number;
   tokenType: 'Bearer';
 }
-//TODO /pkg/crossroad
+
+export interface RefreshResponse {
+  accessToken: string;
+  expiresIn: number;
+  tokenType: 'Bearer';
+}
+// TODO
