@@ -1,20 +1,11 @@
 import { z } from 'zod';
 import {
   USERNAME_VALIDATION,
-  URL_VALIDATION,
 } from '../../shared/validation.constants.js';
-
-// Схема для обновления социальных ссылок
-export const UpdateSocialLinksSchema = z.object({
-  twitter: URL_VALIDATION.optional(),
-  github: URL_VALIDATION.optional(),
-  linkedin: URL_VALIDATION.optional(),
-  telegram: z.string().max(64).optional(),
-}).optional();
+import { SocialLinksSchema } from './social-link.js';
 
 // Схема для обновления профиля (все поля опциональны)
 export const UpdateProfileSchema = z.object({
-  _id: z.string(),
   username: USERNAME_VALIDATION.optional(),
   displayName: z
     .string()
@@ -24,12 +15,6 @@ export const UpdateProfileSchema = z.object({
     .string()
     .max(500, 'Bio must not exceed 500 characters')
     .optional(),
-
-  // Аватар
-  avatarKey: z
-    .string()
-    .optional(),
-
   // Настройки
   isPublic: z.boolean().optional(),
   languages: z
@@ -37,7 +22,7 @@ export const UpdateProfileSchema = z.object({
     .optional(),
 
   // Социальные ссылки
-  socialLinks: UpdateSocialLinksSchema,
+  socialLinks: SocialLinksSchema,
 }).strict(); // Запрещаем неожиданные поля
 
 export type TUpdateProfileSchema = z.infer<typeof UpdateProfileSchema>;
