@@ -62,10 +62,7 @@ describe('SecurityService', () => {
 
       repository.createSecurity.mockResolvedValue(undefined);
 
-      const result = await service.createPassword(
-        'user-1',
-        'password',
-      );
+      const result = await service.createPassword('user-1', 'password');
 
       expect(result).toBe(true);
 
@@ -78,9 +75,7 @@ describe('SecurityService', () => {
     });
 
     it('should throw UnauthorizedException when creation fails', async () => {
-      vi.mocked(bcryptHash).mockRejectedValue(
-        new Error('bcrypt error'),
-      );
+      vi.mocked(bcryptHash).mockRejectedValue(new Error('bcrypt error'));
 
       await expect(
         service.createPassword('user-1', 'password'),
@@ -98,21 +93,13 @@ describe('SecurityService', () => {
 
       vi.mocked(bcryptCompare).mockResolvedValue(true);
 
-      const result = await service.verifyPassword(
-        'user-1',
-        'password',
-      );
+      const result = await service.verifyPassword('user-1', 'password');
 
       expect(result).toBe(true);
 
-      expect(repository.findByUserId).toHaveBeenCalledWith(
-        'user-1',
-      );
+      expect(repository.findByUserId).toHaveBeenCalledWith('user-1');
 
-      expect(bcryptCompare).toHaveBeenCalledWith(
-        'password',
-        'hashed-password',
-      );
+      expect(bcryptCompare).toHaveBeenCalledWith('password', 'hashed-password');
     });
 
     it('should return false for invalid password', async () => {
@@ -122,10 +109,7 @@ describe('SecurityService', () => {
 
       vi.mocked(bcryptCompare).mockResolvedValue(false);
 
-      const result = await service.verifyPassword(
-        'user-1',
-        'wrong-password',
-      );
+      const result = await service.verifyPassword('user-1', 'wrong-password');
 
       expect(result).toBe(false);
     });

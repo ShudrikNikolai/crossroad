@@ -46,9 +46,6 @@ import { Module } from '@nestjs/common';
     },
   ],
 
-  exports: [
-    USER_FACADE,
-    UserService,
-    SecurityService,],
+  exports: [USER_FACADE, UserService, SecurityService],
 })
 export class UserModule {}

@@ -112,26 +112,20 @@ describe('UserService', () => {
         email: 'john@example.com',
       });
 
-      const result = await service.findByEmail(
-        'john@example.com',
-      );
+      const result = await service.findByEmail('john@example.com');
 
       expect(result).toEqual({
         id: 'user-1',
         email: 'john@example.com',
       });
 
-      expect(repository.findByEmail).toHaveBeenCalledWith(
-        'john@example.com',
-      );
+      expect(repository.findByEmail).toHaveBeenCalledWith('john@example.com');
     });
 
     it('should return null when user does not exist', async () => {
       repository.findByEmail.mockResolvedValue(null);
 
-      const result = await service.findByEmail(
-        'john@example.com',
-      );
+      const result = await service.findByEmail('john@example.com');
 
       expect(result).toBeNull();
     });
@@ -141,16 +135,11 @@ describe('UserService', () => {
     it('should delegate verification to SecurityService', async () => {
       securityService.verifyPassword.mockResolvedValue(true);
 
-      const result = await service.verifyPassword(
-        'user-1',
-        'password',
-      );
+      const result = await service.verifyPassword('user-1', 'password');
 
       expect(result).toBe(true);
 
-      expect(
-        securityService.verifyPassword,
-      ).toHaveBeenCalledWith(
+      expect(securityService.verifyPassword).toHaveBeenCalledWith(
         'user-1',
         'password',
       );
@@ -191,29 +180,20 @@ describe('UserService', () => {
         isActive: true,
       });
 
-      expect(
-        securityService.createPassword,
-      ).toHaveBeenCalledWith(
+      expect(securityService.createPassword).toHaveBeenCalledWith(
         'user-1',
         data.password,
       );
 
-      expect(
-        profileService.create,
-      ).toHaveBeenCalledWith(
+      expect(profileService.create).toHaveBeenCalledWith(
         'user-1',
         data.username,
       );
 
-      expect(
-        eventService.emitAsync,
-      ).toHaveBeenCalledWith(
-        'user.created',
-        {
-          userId,
-          email: user.email,
-        },
-      );
+      expect(eventService.emitAsync).toHaveBeenCalledWith('user.created', {
+        userId,
+        email: user.email,
+      });
     });
 
     it('should not emit event when profile creation fails', async () => {
@@ -246,26 +226,17 @@ describe('UserService', () => {
     it('should return true when user was updated', async () => {
       repository.updateById.mockResolvedValue({});
 
-      const result = await service.updatePhoneNumber(
-        'user-1',
-        {} as never,
-      );
+      const result = await service.updatePhoneNumber('user-1', {} as never);
 
       expect(result).toBe(true);
 
-      expect(repository.updateById).toHaveBeenCalledWith(
-        'user-1',
-        {},
-      );
+      expect(repository.updateById).toHaveBeenCalledWith('user-1', {});
     });
 
     it('should return false when user was not updated', async () => {
       repository.updateById.mockResolvedValue(null);
 
-      const result = await service.updatePhoneNumber(
-        'user-1',
-        {} as never,
-      );
+      const result = await service.updatePhoneNumber('user-1', {} as never);
 
       expect(result).toBe(false);
     });
@@ -275,26 +246,17 @@ describe('UserService', () => {
     it('should return true when user was updated', async () => {
       repository.updateById.mockResolvedValue({});
 
-      const result = await service.updateEmail(
-        'user-1',
-        {} as never,
-      );
+      const result = await service.updateEmail('user-1', {} as never);
 
       expect(result).toBe(true);
 
-      expect(repository.updateById).toHaveBeenCalledWith(
-        'user-1',
-        {},
-      );
+      expect(repository.updateById).toHaveBeenCalledWith('user-1', {});
     });
 
     it('should return false when user was not updated', async () => {
       repository.updateById.mockResolvedValue(null);
 
-      const result = await service.updateEmail(
-        'user-1',
-        {} as never,
-      );
+      const result = await service.updateEmail('user-1', {} as never);
 
       expect(result).toBe(false);
     });

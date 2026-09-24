@@ -9,7 +9,10 @@ import {
 import { ProfileService } from '../profile/profile.service';
 import { SecurityService } from '../security/security.service';
 import { EventService } from '@/infrastructure/event/event.service';
-import type { UserCreatedEvent } from '@/infrastructure/event/events/user-created.event';
+import {
+  USER_CREATED_EVENT,
+  type UserCreatedEvent,
+} from '@/infrastructure/event/events/user-created.event';
 import { IUserPublic } from '../dtos';
 
 @Injectable()
@@ -62,8 +65,8 @@ export class UserService implements IUserAuthPort {
       this.serviceProfile.create(user._id.toString(), data.username),
     ]);
 
-    await this.eventService.emitAsync<UserCreatedEvent>('user.created', {
-      userId: user._id,
+    await this.eventService.emitAsync<UserCreatedEvent>(USER_CREATED_EVENT, {
+      userId: user._id.toString(),
       email: user.email,
     });
 

@@ -52,8 +52,6 @@ async function bootstrap() {
     }),
   );
 
-
-
   setupSwagger(app, config, logger);
 
   await app.listen(config.app.port);

@@ -12,7 +12,6 @@ export class StatisticModel extends BaseModel {
   @Prop({
     type: Types.ObjectId,
     required: true,
-    unique: true,
     index: true,
   })
   userId: Types.ObjectId;

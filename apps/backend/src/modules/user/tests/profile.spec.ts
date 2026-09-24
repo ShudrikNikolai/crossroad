@@ -1,8 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import {
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProfileService } from '../profile/profile.service';
@@ -56,18 +53,13 @@ describe('ProfileService', () => {
       repository.findOne.mockResolvedValue(null);
       repository.createProfile.mockResolvedValue(undefined);
 
-      await expect(
-        service.create('user-1', 'john'),
-      ).resolves.toBeUndefined();
+      await expect(service.create('user-1', 'john')).resolves.toBeUndefined();
 
       expect(repository.findOne).toHaveBeenCalledWith({
         username: 'john',
       });
 
-      expect(repository.createProfile).toHaveBeenCalledWith(
-        'user-1',
-        'john',
-      );
+      expect(repository.createProfile).toHaveBeenCalledWith('user-1', 'john');
 
       expect(logger.info).toHaveBeenCalledWith(
         'Profile created for user user-1',
@@ -77,9 +69,9 @@ describe('ProfileService', () => {
     it('should throw ConflictException when username is taken', async () => {
       repository.findOne.mockResolvedValue({});
 
-      await expect(
-        service.create('user-1', 'john'),
-      ).rejects.toBeInstanceOf(ConflictException);
+      await expect(service.create('user-1', 'john')).rejects.toBeInstanceOf(
+        ConflictException,
+      );
 
       expect(repository.createProfile).not.toHaveBeenCalled();
     });
@@ -90,9 +82,7 @@ describe('ProfileService', () => {
       repository.findOne.mockResolvedValue(null);
       repository.createProfile.mockRejectedValue(error);
 
-      await expect(
-        service.create('user-1', 'john'),
-      ).rejects.toBe(error);
+      await expect(service.create('user-1', 'john')).rejects.toBe(error);
 
       expect(logger.error).toHaveBeenCalled();
     });
@@ -125,9 +115,9 @@ describe('ProfileService', () => {
     it('should throw NotFoundException when profile does not exist', async () => {
       repository.findOne.mockResolvedValue(null);
 
-      await expect(
-        service.getMe('user-1'),
-      ).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.getMe('user-1')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
 
       expect(logger.warn).toHaveBeenCalled();
     });
@@ -154,10 +144,7 @@ describe('ProfileService', () => {
 
       expect(result).toEqual(privateProfile);
 
-      expect(repository.updateByUserId).toHaveBeenCalledWith(
-        'user-1',
-        data,
-      );
+      expect(repository.updateByUserId).toHaveBeenCalledWith('user-1', data);
 
       expect(profile.toPrivate).toHaveBeenCalled();
     });
@@ -190,9 +177,7 @@ describe('ProfileService', () => {
 
       expect(result).toEqual(publicProfile);
 
-      expect(repository.findPublicProfile).toHaveBeenCalledWith(
-        'profile-1',
-      );
+      expect(repository.findPublicProfile).toHaveBeenCalledWith('profile-1');
 
       expect(profile.toPublic).toHaveBeenCalled();
     });

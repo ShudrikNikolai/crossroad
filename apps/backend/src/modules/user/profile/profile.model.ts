@@ -22,7 +22,7 @@ type TPublicProfileSchema = {
 type TPrivateProfileSchema = TPublicProfileSchema & {
   userId: string;
   isPublic: boolean;
-  updatedAt: Date;
+  updatedAt: string;
 };
 
 @Schema({
@@ -86,7 +86,7 @@ export class ProfileModel extends BaseModel {
       avatarUrl: this.avatarUrl,
       languages: this.languages,
       socialLinks: this.socialLinks,
-      createdAt: this.createdAt,
+      createdAt: this.createdAt.toISOString(),
     } as any;
   }
 
@@ -95,7 +95,7 @@ export class ProfileModel extends BaseModel {
       ...this.toPublic(),
       userId: this.userId?.toString(),
       isPublic: this.isPublic,
-      updatedAt: this.updatedAt,
+      updatedAt: this.updatedAt.toISOString(),
     };
   }
 }

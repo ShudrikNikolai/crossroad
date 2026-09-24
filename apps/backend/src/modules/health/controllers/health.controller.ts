@@ -1,35 +1,43 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { HealthCheck, HttpHealthIndicator } from '@nestjs/terminus';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  HealthCheck,
+  HealthCheckService,
+  HttpHealthIndicator,
+} from '@nestjs/terminus';
 import { HealthService } from '../services/health.service';
-import { Public } from '@/modules/auth/decorators';
+import { Public } from '@/common';
 
 @ApiTags('HEALTH')
-@Public() // TODO вынести декораторы
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(
-    private http: HttpHealthIndicator,
+    private readonly health: HealthCheckService,
+    private readonly http: HttpHealthIndicator,
     private readonly healthService: HealthService,
   ) {}
 
   @Get('ping')
-  @HealthCheck()
-  checkMe() {
-    return 'ok';
+  @ApiOperation({ summary: 'Liveness probe — process is up' })
+  ping() {
+    return { status: 'ok' as const };
   }
 
   @Get('network')
   @HealthCheck()
-  async checkNetwork() {
-    return this.http.pingCheck('google', 'https://google.com', {
-      timeout: 8000,
-    });
+  @ApiOperation({ summary: 'Readiness probe — outbound network reachable' })
+  checkNetwork() {
+    return this.health.check([
+      () =>
+        this.http.pingCheck('google', 'https://google.com', { timeout: 8000 }),
+    ]);
   }
 
   @Get('db')
   @HealthCheck()
-  async checkDb() {
+  @ApiOperation({ summary: 'Readiness probe — database reachable' })
+  checkDb() {
     return this.healthService.checkDb();
   }
 }

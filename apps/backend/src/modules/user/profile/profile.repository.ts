@@ -32,12 +32,18 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
     });
   }
 
-  async updateByUserId(uId: string, data: Omit<Partial<ProfileDocument>, '_id'>): Promise<ProfileDocument | null> {
+  async updateByUserId(
+    uId: string,
+    data: Omit<Partial<ProfileDocument>, '_id'>,
+  ): Promise<ProfileDocument | null> {
     const userId = this.toObjectId(uId);
-    return this.model.findOneAndUpdate({
-      userId
-    }, {
-      ...data
-    })
+    return this.model.findOneAndUpdate(
+      {
+        userId,
+      },
+      {
+        ...data,
+      },
+    );
   }
 }

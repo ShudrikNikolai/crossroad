@@ -12,4 +12,12 @@ export class StatisticRepository extends BaseRepository<StatisticDocument> {
   ) {
     super(model);
   }
+
+  async createStat(type: string, uId: string): Promise<void> {
+    const userId = this.toObjectId(uId);
+    await this.create({
+      type,
+      userId,
+    });
+  }
 }
