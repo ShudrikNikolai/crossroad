@@ -1,17 +1,8 @@
-import { authApi } from '@/shared/api/axios';
+import { api } from '@/shared/api/axios';
 import type { ApiResponse } from '@/shared/api/types';
-import type { AuthTokens } from '../types/auth.types';
+import type { AuthResponse } from '../types/auth.types';
 
-export interface RefreshRequest {
-  refreshToken: string;
-}
-
-export async function refresh(
-  data: RefreshRequest,
-): Promise<AuthTokens> {
-  const response = await authApi.post<
-    ApiResponse<AuthTokens>
-  >('/auth/refresh', data);
-
+export async function refreshSession(): Promise<AuthResponse> {
+  const response = await api.post<ApiResponse<AuthResponse>>('/auth/refresh');
   return response.data.data;
 }

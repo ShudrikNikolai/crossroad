@@ -1,20 +1,16 @@
 import { api } from '@/shared/api/axios';
 import type { ApiResponse } from '@/shared/api/types';
-import type { AuthTokens } from '../types/auth.types';
+import type { AuthResponse  } from '../types/auth.types';
 
-export interface RegisterRequest {
+export interface RegisterRequest { //TODO типы из packages/schema
   username: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-export async function register(
-  data: RegisterRequest,
-): Promise<AuthTokens> {
-  const response = await api.post<ApiResponse<AuthTokens>>(
-    '/auth/register',
-    data,
-  );
-
+export async function register(data: RegisterRequest): Promise<AuthResponse > {
+  const response = await api.post<ApiResponse<AuthResponse >>('/auth/register', data);
   return response.data.data;
 }
+// TODO
