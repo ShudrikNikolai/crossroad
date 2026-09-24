@@ -22,7 +22,7 @@ const setupSwagger = (
     .setVersion(version)
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'access-token', // имя схемы — должно совпадать с @ApiBearerAuth('access-token')
+      'access-token',
     );
 
   const document = SwaggerModule.createDocument(app, documentBuilder.build(), {

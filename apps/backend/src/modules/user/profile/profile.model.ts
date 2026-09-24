@@ -3,27 +3,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
 export type ProfileDocument = HydratedDocument<ProfileModel>;
-type TPublicProfileSchema = {
-  id: string;
-  username: string;
-  displayName?: string;
-  bio?: string;
-  avatarKey?: string;
-  avatarUrl?: string;
-  languages: string[];
-  socialLinks?: {
-    twitter?: string;
-    github?: string;
-    linkedin?: string;
-    telegram?: string;
-  };
-  createdAt: Date;
-};
-type TPrivateProfileSchema = TPublicProfileSchema & {
-  userId: string;
-  isPublic: boolean;
-  updatedAt: string;
-};
 
 @Schema({
   collection: 'user_profiles',
@@ -75,29 +54,6 @@ export class ProfileModel extends BaseModel {
     linkedin?: string;
     telegram?: string;
   };
-
-  toPublic(): TPublicProfileSchema {
-    return {
-      _id: this?._id?.toString(),
-      username: this.username,
-      displayName: this.displayName,
-      bio: this.bio,
-      avatarKey: this.avatarKey,
-      avatarUrl: this.avatarUrl,
-      languages: this.languages,
-      socialLinks: this.socialLinks,
-      createdAt: this.createdAt.toISOString(),
-    } as any;
-  }
-
-  toPrivate(): TPrivateProfileSchema {
-    return {
-      ...this.toPublic(),
-      userId: this.userId?.toString(),
-      isPublic: this.isPublic,
-      updatedAt: this.updatedAt.toISOString(),
-    };
-  }
 }
 
 export const ProfileSchema = SchemaFactory.createForClass(ProfileModel);

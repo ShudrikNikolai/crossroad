@@ -4,6 +4,10 @@ export interface AuthUser {
   username: string;
 }
 
+export interface AuthResponse {
+  accessToken: string;
+}
+
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
