@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { StatisticRepository } from '../repositories/statistic.repository';
+import { StatisticRepository } from './statistic.repository';
 import {
   USER_CREATED_EVENT,
   type UserCreatedEvent,

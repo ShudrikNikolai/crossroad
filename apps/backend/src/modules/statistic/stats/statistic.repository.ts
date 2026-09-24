@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { StatisticDocument, StatisticModel } from '../models/statistic.model';
+import { StatisticDocument, StatisticModel } from './statistic.model';
 import { BaseRepository } from '@/common';
 import { InjectModel } from '@nestjs/mongoose';
 

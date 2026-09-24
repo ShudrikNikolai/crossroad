@@ -24,7 +24,6 @@ export class ProfileController {
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiOkResponse({ type: MeDto })
   async me(@CurrentUser('id') userId: string) {
-    console.log('userId >>>', userId)
     return this.profileService.getMe(userId);
   }
 
