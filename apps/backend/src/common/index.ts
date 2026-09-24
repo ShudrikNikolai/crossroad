@@ -4,3 +4,4 @@ export * from './middleware';
 export * from './models';
 export * from './utils';
 export * from './repositories';
+export * from './decorators';

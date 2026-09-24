@@ -13,6 +13,7 @@ export class RedisService implements OnModuleDestroy {
   ) {
     this.logger.setContext(RedisService.name);
     const redisConfig = this.configService.redis;
+
     this.logger.info(
       `Connecting to Redis at ${redisConfig.host}`,
       RedisService.name,

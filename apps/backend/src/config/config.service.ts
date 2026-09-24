@@ -48,6 +48,10 @@ export class ConfigService {
     return this.app.nodeEnv === 'development';
   }
 
+  get isProd(): boolean {
+    return this.app.nodeEnv === 'production';
+  }
+
   getOrThrow<K extends keyof IConfigs>(propertyPath: K): IConfigs[K] {
     return this.configService.getOrThrow(propertyPath);
   }
