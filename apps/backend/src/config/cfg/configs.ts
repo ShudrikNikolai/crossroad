@@ -38,6 +38,7 @@ type TLoggerConfig = ConfigType<typeof LoggerConfig>;
 const SwaggerConfig = registerAs(CONST.SWAGGER, () => {
   const parsed = SwaggerSchema.parse(process.env);
   return {
+    createFile: parsed.SWAGGER_CREATE_FILE,
     enable: parsed.SWAGGER_ENABLE,
     path: parsed.SWAGGER_PATH,
   };

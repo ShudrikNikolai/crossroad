@@ -26,6 +26,7 @@ export const LoggerSchema = z.object({
 });
 
 export const SwaggerSchema = z.object({
+  SWAGGER_CREATE_FILE: booleanFromEnv,
   SWAGGER_ENABLE: booleanFromEnv,
   SWAGGER_PATH: z.string().min(1),
 });

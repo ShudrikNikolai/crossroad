@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoggerService } from '@/infra/logger/logger.service';
 import { ConfigService } from '@/config';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
+import fs from 'fs';
 
 const setupSwagger = (
   app: INestApplication,
@@ -30,6 +31,9 @@ const setupSwagger = (
     extraModels: [],
   });
   const cleanedDocument = cleanupOpenApiDoc(document);
+  if (config.swagger.createFile) {
+    fs.writeFileSync('./swagger-spec.json', JSON.stringify(document));
+  }
 
   SwaggerModule.setup(path, app, cleanedDocument, {});
 

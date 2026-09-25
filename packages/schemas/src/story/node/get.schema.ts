@@ -7,6 +7,6 @@ export const NodeResponseSchema = z.object({
   type: NodeTypeSchema,
   position: PositionSchema,
   content: NodeContentSchema,
-}).meta({ id: 'NodeResponse' });
+});
 
 export type TNodeResponse = z.infer<typeof NodeResponseSchema>;

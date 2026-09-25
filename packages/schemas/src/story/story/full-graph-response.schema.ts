@@ -9,6 +9,6 @@ export const FullGraphResponseSchema = z.object({
   nodes: z.array(NodeResponseSchema),
   edges: z.array(EdgeResponseSchema),
   variables: z.array(VariableResponseSchema),
-}).meta({ id: 'FullGraphResponse' });
+});
 
 export type TFullGraphResponse = z.infer<typeof FullGraphResponseSchema>;

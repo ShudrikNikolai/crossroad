@@ -6,6 +6,6 @@ export const VariableResponseSchema = z.object({
   key: z.string(),
   type: VariableTypeSchema,
   defaultValue: z.union([z.string(), z.number(), z.boolean()]),
-}).meta({ id: 'VariableResponse' });
+});
 
 export type TVariableResponse = z.infer<typeof VariableResponseSchema>;

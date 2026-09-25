@@ -8,6 +8,6 @@ export const EdgeResponseSchema = z.object({
   target: z.string(),
   label: z.string().optional(),
   conditions: z.array(EdgeConditionSchema).optional(),
-}).meta({ id: 'EdgeResponse' });
+});
 
 export type TEdgeResponse = z.infer<typeof EdgeResponseSchema>;

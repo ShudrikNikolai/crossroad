@@ -10,6 +10,6 @@ export const StoryResponseSchema = z.object({
   startNodeId: z.string().optional(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
-}).meta({ id: 'StoryResponse' });
+});
 
 export type TStoryResponse = z.infer<typeof StoryResponseSchema>;
