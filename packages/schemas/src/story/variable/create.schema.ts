@@ -3,7 +3,6 @@ import { z } from 'zod';
 export const VariableTypeSchema = z.enum(['string', 'number', 'boolean']);
 
 export const CreateVariableSchema = z.object({
-  storyId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId'),
   key: z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, 'Must be a valid identifier'),
   type: VariableTypeSchema,
   defaultValue: z.union([z.string(), z.number(), z.boolean()]),

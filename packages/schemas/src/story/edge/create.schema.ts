@@ -9,12 +9,11 @@ export const EdgeConditionSchema = z.object({
 });
 
 export const CreateEdgeSchema = z.object({
-  storyId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId'),
   id: z.string().min(1),
-  source: z.string().min(1), // id узла-источника
-  target: z.string().min(1), // id узла-назначения
-  label: z.string().trim().max(200).optional(), // текст выбора для игрока
-  conditions: z.array(EdgeConditionSchema).optional(), // AND-логика между условиями
+  source: z.string().min(1),
+  target: z.string().min(1),
+  label: z.string().trim().max(200).optional(),
+  conditions: z.array(EdgeConditionSchema).optional(),
 });
 
 export type TCreateEdgeSchema = z.infer<typeof CreateEdgeSchema>;

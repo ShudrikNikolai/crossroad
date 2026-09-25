@@ -1,8 +1,22 @@
 import { MongooseModule } from '@nestjs/mongoose';
-import { ProfileController, SecurityController, UserController } from './controllers';
+import {
+  ProfileController,
+  SecurityController,
+  UserController,
+} from './controllers';
 import { USER_FACADE } from './facades/user.facade';
-import { ProfileModel, ProfileSchema, ProfileRepository, ProfileService } from './profile';
-import { SecurityModel, SecuritySchema,SecurityRepository,SecurityService } from './security';
+import {
+  ProfileModel,
+  ProfileSchema,
+  ProfileRepository,
+  ProfileService,
+} from './profile';
+import {
+  SecurityModel,
+  SecuritySchema,
+  SecurityRepository,
+  SecurityService,
+} from './security';
 import { UserModel, UserSchema, UserRepository, UserService } from './user';
 import { Module } from '@nestjs/common';
 

@@ -44,7 +44,7 @@ export class ProfileService {
       throw new NotFoundException('Profile not found');
     }
 
-    return this.repository.toPrivate(me)
+    return this.repository.toPrivate(me);
   }
 
   async updateMe(
@@ -53,7 +53,7 @@ export class ProfileService {
   ): Promise<TMeProfileSchema> {
     const updated = await this.repository.updateByUserId(userId, data);
     if (!updated) throw new NotFoundException('Profile not found');
-    return this.repository.toPrivate(updated)
+    return this.repository.toPrivate(updated);
   }
 
   async getPublicProfile(profileId: string): Promise<TPublicProfileSchema> {
@@ -62,7 +62,7 @@ export class ProfileService {
       throw new NotFoundException('Public profile not found');
     }
 
-    return this.repository.toPublic(profile)
+    return this.repository.toPublic(profile);
   }
 
   async uploadAvatar(

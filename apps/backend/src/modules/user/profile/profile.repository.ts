@@ -37,7 +37,7 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
 
   async findByUserId(uId: string): Promise<ProfileDocument | null> {
     const userId = this.toObjectId(uId);
-    return this.findOne({ userId })
+    return this.findOne({ userId });
   }
 
   async createProfile(uId: string, username: string): Promise<void> {
@@ -81,7 +81,7 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
       languages: data.languages ?? ['ru'],
       socialLinks: data.socialLinks,
       createdAt: data.createdAt.toISOString(),
-    }
+    };
   }
 
   toPrivate(data: ProfileDocument): TPrivateProfileSchema {
@@ -90,6 +90,6 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
       userId: data.userId?.toString(),
       isPublic: data.isPublic,
       updatedAt: data.updatedAt.toISOString(),
-    }
+    };
   }
 }
