@@ -11,7 +11,7 @@ import {
   RefreshTokenModel,
   RefreshTokenSchema,
   RefreshTokenService,
-  RefreshTokenRepository
+  RefreshTokenRepository,
 } from './refresh-token';
 import { AuthService } from './auth/auth.service';
 

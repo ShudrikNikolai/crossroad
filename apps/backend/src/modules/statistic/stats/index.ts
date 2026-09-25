@@ -1,3 +1,3 @@
-export * from './statistic.model'
-export * from './statistic.repository'
-export * from './statistic.service'
+export * from './statistic.model';
+export * from './statistic.repository';
+export * from './statistic.service';
