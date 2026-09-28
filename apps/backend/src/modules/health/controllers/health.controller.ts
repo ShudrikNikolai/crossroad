@@ -5,7 +5,7 @@ import {
   HealthCheckService,
  HttpHealthIndicator,
 } from '@nestjs/terminus';
-import { HealthService } from './health.service';
+import { HealthService } from '../services/health.service';
 import { Public } from '@/common';
 
 @ApiTags('HEALTH')

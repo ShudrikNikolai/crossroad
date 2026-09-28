@@ -13,7 +13,7 @@ import {
   RefreshTokenService,
   RefreshTokenRepository,
 } from './refresh-token';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from './services/auth.service';
 
 @Module({
   imports: [

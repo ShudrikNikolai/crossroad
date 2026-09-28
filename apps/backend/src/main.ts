@@ -11,11 +11,11 @@ import { NestFactory } from '@nestjs/core';
 // };
 import { AppModule } from './app.module';
 import { LoggerService } from './infrastructure/logger/logger.service';
-import setupSwagger from './swagger';
 import { VersioningType } from '@nestjs/common';
 import { ConfigService } from './config';
 import cookieParser from 'cookie-parser';
 import { json, urlencoded } from 'express';
+import { setupSwagger } from './common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

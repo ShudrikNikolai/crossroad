@@ -10,7 +10,7 @@ import {
 } from './common';
 // import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { MainModule } from './modules/main.module';
+import { MainModule } from './modules/core.module';
 import { JwtAuthGuard } from './modules/auth/guards';
 
 @Module({
