@@ -22,21 +22,21 @@ export class GameController {
   @Post()
   @ApiOperation({ summary: 'Start a new playthrough of a published story' })
   @ApiOkResponse({ type: GameStepResponseDto })
-  start(@CurrentUser('id') userId: string, @Body() data: CreateGameDto) {
+  async start(@CurrentUser('id') userId: string, @Body() data: CreateGameDto) {
     return this.gameService.start(userId, data.storyId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get current playthrough state' })
   @ApiOkResponse({ type: GameStepResponseDto })
-  getState(@Param('id') id: string, @CurrentUser('id') userId: string) {
+  async getState(@Param('id') id: string, @CurrentUser('id') userId: string) {
     return this.gameService.getState(id, userId);
   }
 
   @Post(':id/next-step')
   @ApiOperation({ summary: 'Make a choice and advance the playthrough' })
   @ApiOkResponse({ type: GameStepResponseDto })
-  nextStep(
+  async nextStep(
     @Param('id') id: string,
     @CurrentUser('id') userId: string,
     @Body() data: UpdateGameNextStepDto,

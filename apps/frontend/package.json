@@ -6,13 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@crossroad/schemas": "workspace:*",
     "@crossroad/types": "workspace:*",
     "@heroui/react": "^3.2.5",
     "@heroui/styles": "^3.2.5",
+    "@xyflow/react": "^12.12.0",
     "axios": "^1.20.0",
     "next": "16.3.4",
     "react": "19.2.8",
@@ -26,6 +29,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "prettier": "^3.9.6",
+    "prettier-plugin-organize-imports": "^4.3.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -31,14 +31,14 @@ export class NodeController {
   @Get()
   @ApiOperation({ summary: 'Get all nodes of a story' })
   @ApiOkResponse({ type: [NodeResponseDto] })
-  findAll(@Param('storyId') storyId: string) {
+  async findAll(@Param('storyId') storyId: string) {
     return this.nodeService.findAllByStory(storyId);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create a node in the story graph' })
   @ApiOkResponse({ type: NodeResponseDto })
-  create(
+  async create(
     @Param('storyId') storyId: string,
     @CurrentUser('id') authorId: string,
     @Body() data: CreateNodeDto,
@@ -49,7 +49,7 @@ export class NodeController {
   @Patch(':nodeId')
   @ApiOperation({ summary: 'Update a node (type/content)' })
   @ApiOkResponse({ type: NodeResponseDto })
-  update(
+  async update(
     @Param('storyId') storyId: string,
     @Param('nodeId') nodeId: string,
     @CurrentUser('id') authorId: string,
@@ -63,7 +63,7 @@ export class NodeController {
     summary: 'Update only node position (cheap, frequent — drag in the editor)',
   })
   @ApiOkResponse({ type: NodeResponseDto })
-  updatePosition(
+  async updatePosition(
     @Param('storyId') storyId: string,
     @Param('nodeId') nodeId: string,
     @CurrentUser('id') authorId: string,
@@ -74,7 +74,7 @@ export class NodeController {
 
   @Delete(':nodeId')
   @ApiOperation({ summary: 'Delete a node' })
-  delete(
+  async delete(
     @Param('storyId') storyId: string,
     @Param('nodeId') nodeId: string,
     @CurrentUser('id') authorId: string,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MinioClient } from './minio.client';
-import { IStorage, StorageObject, StorageUpload } from '../storage.interface';
+import { IStorage, UploadPolicy, UploadPolicyRequest, StorageUpload, StorageObject} from '../storage.interface';
 
 @Injectable()
 export class MinioStorage implements IStorage {
@@ -59,20 +59,17 @@ export class MinioStorage implements IStorage {
     );
   }
 
-  async getUploadPolicy(
-    key: string,
-    maxSizeBytes: number,
-    contentType: string,
-  ) {
+  async getUploadPolicy(data: UploadPolicyRequest): Promise<UploadPolicy> {
+    const { key, contentType, maxSizeBytes, expiresIn = 600 } = data;
+
     const policy = this.minio.client.newPostPolicy();
     policy.setBucket(this.minio.bucket);
     policy.setKey(key);
     policy.setContentType(contentType);
     policy.setContentLengthRange(1, maxSizeBytes);
-    policy.setExpires(new Date(Date.now() + 60 * 60 * 1000));
+    policy.setExpires(new Date(Date.now() + expiresIn * 1000));
 
-    // TODO использ. эту срань
-    // возвращает { postURL, formData } — клиент шлёт multipart FormData с этими полями
-    return this.minio.client.presignedPostPolicy(policy);
+    const { postURL, formData } = await this.minio.client.presignedPostPolicy(policy);
+    return { url: postURL, fields: formData };
   }
 }

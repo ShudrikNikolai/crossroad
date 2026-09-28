@@ -1,2 +1,2 @@
-export { api, authApi } from './axios';
-export { setupAuthInterceptor } from './auth-interceptor';
+export * from './axios';
+export * from './auth-interceptor';

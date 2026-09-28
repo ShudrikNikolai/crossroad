@@ -1,26 +1,13 @@
-import type {
-  AxiosError,
-  InternalAxiosRequestConfig,
-} from 'axios';
+import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 import { api } from './axios';
-import { refreshSession } from '@/features/auth/api/refresh';
 import { useAuthStore } from '@/stores/auth.store';
 
 interface AuthRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-let refreshPromise: Promise<string> | null = null;
 let isInterceptorInitialized = false;
-
-async function refreshAccessToken(): Promise<string> {
-  const result = await refreshSession();
-
-  useAuthStore.getState().setAccessToken(result.accessToken);
-
-  return result.accessToken;
-}
 
 export function setupAuthInterceptor(): void {
   if (isInterceptorInitialized) {
@@ -41,39 +28,14 @@ export function setupAuthInterceptor(): void {
 
   api.interceptors.response.use(
     (response) => response,
-
     async (error: AxiosError) => {
-      const originalRequest =
-        error.config as AuthRequestConfig | undefined;
+      const originalRequest = error.config as AuthRequestConfig | undefined;
 
-      if (
-        error.response?.status !== 401 ||
-        !originalRequest ||
-        originalRequest._retry
-      ) {
-        return Promise.reject(error);
-      }
-
-      originalRequest._retry = true;
-
-      try {
-        if (!refreshPromise) {
-          refreshPromise = refreshAccessToken().finally(() => {
-            refreshPromise = null;
-          });
-        }
-
-        const accessToken = await refreshPromise;
-
-        originalRequest.headers.Authorization =
-          `Bearer ${accessToken}`;
-
-        return api(originalRequest);
-      } catch (refreshError) {
+      if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
         useAuthStore.getState().clearAuth();
-
-        return Promise.reject(refreshError);
       }
+
+      return Promise.reject(error);
     },
   );
 }

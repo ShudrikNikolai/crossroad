@@ -26,14 +26,14 @@ export class EdgeController {
   @Get()
   @ApiOperation({ summary: 'Get all edges of a story' })
   @ApiOkResponse({ type: [EdgeResponseDto] })
-  findAll(@Param('storyId') storyId: string) {
+  async findAll(@Param('storyId') storyId: string) {
     return this.edgeService.findAllByStory(storyId);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create an edge between two nodes' })
   @ApiOkResponse({ type: EdgeResponseDto })
-  create(
+  async create(
     @Param('storyId') storyId: string,
     @CurrentUser('id') authorId: string,
     @Body() data: CreateEdgeDto,
@@ -44,7 +44,7 @@ export class EdgeController {
   @Patch(':edgeId')
   @ApiOperation({ summary: 'Update an edge (target, label, conditions)' })
   @ApiOkResponse({ type: EdgeResponseDto })
-  update(
+  async update(
     @Param('storyId') storyId: string,
     @Param('edgeId') edgeId: string,
     @CurrentUser('id') authorId: string,
@@ -55,7 +55,7 @@ export class EdgeController {
 
   @Delete(':edgeId')
   @ApiOperation({ summary: 'Delete an edge' })
-  delete(
+  async delete(
     @Param('storyId') storyId: string,
     @Param('edgeId') edgeId: string,
     @CurrentUser('id') authorId: string,

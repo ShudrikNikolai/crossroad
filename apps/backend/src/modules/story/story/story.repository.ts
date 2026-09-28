@@ -16,6 +16,7 @@ export class StoryRepository extends BaseRepository<StoryDocument> {
   }
 
   create(data: Pick<StoryModel, 'title' | 'description' | 'authorId'>) {
+    data.authorId = this.toObjectId(`${data.authorId}`)
     return this.model.create(data);
   }
 

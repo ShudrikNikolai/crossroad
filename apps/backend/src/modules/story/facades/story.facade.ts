@@ -58,4 +58,8 @@ export class StoryFacade {
       );
     }
   }
+
+  async assertEditable(storyId: string, authorId: string): Promise<void> {
+    await this.storyService.assertEditable(storyId, authorId);
+  }
 }

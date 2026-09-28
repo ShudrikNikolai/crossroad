@@ -1,4 +1,5 @@
 export interface IStoryPort {
+  assertEditable(storyId: string, authorId: string): Promise<void>;
   getPublishedGraph(storyId: string): Promise<{
     story: { id: string; startNodeId: string };
     nodes: Array<{ id: string; type: string; content: unknown }>;

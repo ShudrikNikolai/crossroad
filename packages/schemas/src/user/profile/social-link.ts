@@ -7,3 +7,5 @@ export const SocialLinksSchema = z.object({
   linkedin: URL_VALIDATION.optional(),
   telegram: z.string().max(64).optional(),
 }).optional();
+
+export type TSocialLinks = z.infer<typeof SocialLinksSchema>;

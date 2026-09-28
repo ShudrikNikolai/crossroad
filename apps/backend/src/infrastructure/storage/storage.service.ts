@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { STORAGE } from './storage.const';
-import type { IStorage, StorageUpload } from './storage.interface';
+import type { IStorage, StorageUpload, UploadPolicyRequest } from './storage.interface';
 
 @Injectable()
 export class StorageService {
@@ -27,5 +27,9 @@ export class StorageService {
 
   getUrl(key: string, expiresIn?: number) {
     return this.storage.getUrl(key, expiresIn);
+  }
+
+  getUploadPolicy(data: UploadPolicyRequest) {
+    return this.storage.getUploadPolicy(data);
   }
 }

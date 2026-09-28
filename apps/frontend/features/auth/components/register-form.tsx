@@ -3,19 +3,15 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button, Form, Input, Label, TextField } from '@heroui/react';
-import { register } from '@/features/auth/api/register';
-import { getMe } from '@/features/auth/api/me';
 import { useAuthStore } from '@/stores/auth.store';
 import router from 'next/router';
+import { getMe } from '../api/profile';
+import { register } from '../api/auth';
 
 export function RegisterForm() {
-  const setAccessToken = useAuthStore(
-    (state) => state.setAccessToken,
-  );
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
-  const setUser = useAuthStore(
-    (state) => state.setUser,
-  );
+  const setUser = useAuthStore((state) => state.setUser);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -38,9 +34,15 @@ export function RegisterForm() {
 
     try {
       const tokens = await register({ username, email, password, confirmPassword: password });
+      if (!tokens) {
+        throw new Error('invalid tokens')
+      }
       setAccessToken(tokens.accessToken);
 
       const user = await getMe();
+      if (!user) {
+        throw new Error('user is failed')
+      }
       setUser(user);
 
       router.replace('/dashboard');
@@ -54,14 +56,14 @@ export function RegisterForm() {
   return (
     <section className="w-full max-w-md">
       <div className="mb-8">
-        <h1 className="text-3xl font-semibold tracking-tight">Create your account</h1>
-        <p className="mt-2 text-muted">Start creating interactive stories with Crossroad.</p>
+        <h1 className="text-3xl font-semibold tracking-tight">Создайте свою учетную запись</h1>
+        <p className="mt-2 text-muted">Начните создавать интерактивные истории с Crossroad.</p>
       </div>
 
       <Form className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <TextField name="username" type="text" isRequired>
-          <Label>Username</Label>
-          <Input placeholder="Your username" />
+          <Label>Имя пользователя</Label>
+          <Input placeholder="Ваше имя пользователя" />
         </TextField>
 
         <TextField name="email" type="email" isRequired>
@@ -70,32 +72,29 @@ export function RegisterForm() {
         </TextField>
 
         <TextField name="password" type="password" isRequired>
-          <Label>Password</Label>
-          <Input placeholder="Create a password" />
+          <Label>Пароль</Label>
+          <Input placeholder="Создать пароль" />
         </TextField>
 
         <TextField name="confirmPassword" type="password" isRequired>
-          <Label>Confirm password</Label>
-          <Input placeholder="Repeat your password" />
+          <Label>Подтвердите пароль</Label>
+          <Input placeholder="Повторите пароль" />
         </TextField>
 
         {error && <p className="text-sm text-danger">{error}</p>}
 
         <Button type="submit" variant="primary" className="w-full" isDisabled={isLoading}>
-          {isLoading ? 'Creating account...' : 'Create account'}
+          {isLoading ? 'Создание учетной записи...' : 'Учетная запись создана'}
         </Button>
       </Form>
 
       <p className="mt-6 text-center text-sm text-muted">
-        Already have an account?{' '}
-          <Link href="/login">
-            <Button
-              variant="ghost"
-              size="sm"
-            >
-              Sign in
-            </Button>
-          </Link>
+        У вас уже есть аккаунт?{' '}
+        <Link href="/login">
+          <Button variant="ghost" size="sm">
+            Войти
+          </Button>
+        </Link>
       </p>
     </section>
   );

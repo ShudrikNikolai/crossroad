@@ -30,19 +30,26 @@ export class StoryController {
   constructor(
     private readonly storyService: StoryService,
     private readonly storyFacade: StoryFacade,
-  ) {}
+  ) { }
+
+  @Get()
+  @ApiOperation({ summary: 'Get authros stories' })
+  @ApiOkResponse({ type: [StoryResponseDto] })
+  async getMyStpries(@CurrentUser('id') authorId: string) {
+    return this.storyService.getStories(authorId)
+  }
 
   @Post()
   @ApiOperation({ summary: 'Create a new story' })
   @ApiOkResponse({ type: StoryResponseDto })
-  create(@CurrentUser('id') authorId: string, @Body() data: CreateStoryDto) {
+  async create(@CurrentUser('id') authorId: string, @Body() data: CreateStoryDto) {
     return this.storyService.create(authorId, data);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get story metadata' })
   @ApiOkResponse({ type: StoryResponseDto })
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.storyService.findById(id);
   }
 
@@ -52,14 +59,14 @@ export class StoryController {
       'Get full graph (story + nodes + edges + variables) for the editor',
   })
   @ApiOkResponse({ type: FullGraphResponseDto })
-  getGraph(@Param('id') id: string) {
+  async getGraph(@Param('id') id: string) {
     return this.storyFacade.getFullGraph(id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update story metadata' })
   @ApiOkResponse({ type: StoryResponseDto })
-  update(
+  async update(
     @Param('id') id: string,
     @CurrentUser('id') authorId: string,
     @Body() data: UpdateStoryDto,
@@ -70,7 +77,12 @@ export class StoryController {
   @Post(':id/publish')
   @ApiOperation({ summary: 'Publish the story (locks it from further edits)' })
   @ApiOkResponse({ type: StoryResponseDto })
-  publish(@Param('id') id: string, @CurrentUser('id') authorId: string) {
+  async publish(@Param('id') id: string, @CurrentUser('id') authorId: string) {
     return this.storyFacade.publish(id, authorId);
   }
+
+  @Get('public')
+  @ApiOperation({ summary: 'Publish the story (locks it from further edits)' })
+  @ApiOkResponse({ type: StoryResponseDto })
+  async public() {}
 }

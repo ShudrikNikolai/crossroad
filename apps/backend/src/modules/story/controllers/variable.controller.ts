@@ -30,14 +30,14 @@ export class VariableController {
   @Get()
   @ApiOperation({ summary: 'Get all variables of a story' })
   @ApiOkResponse({ type: [VariableResponseDto] })
-  findAll(@Param('storyId') storyId: string) {
+  async findAll(@Param('storyId') storyId: string) {
     return this.variableService.findAllByStory(storyId);
   }
 
   @Post()
   @ApiOperation({ summary: 'Declare a new story variable' })
   @ApiOkResponse({ type: VariableResponseDto })
-  create(
+  async create(
     @Param('storyId') storyId: string,
     @CurrentUser('id') authorId: string,
     @Body() data: CreateVariableDto,
@@ -51,7 +51,7 @@ export class VariableController {
       'Update variable type/default value (key is immutable — see below)',
   })
   @ApiOkResponse({ type: VariableResponseDto })
-  update(
+  async update(
     @Param('storyId') storyId: string,
     @Param('key') key: string,
     @CurrentUser('id') authorId: string,
@@ -62,7 +62,7 @@ export class VariableController {
 
   @Delete(':key')
   @ApiOperation({ summary: 'Delete a story variable' })
-  delete(
+  async delete(
     @Param('storyId') storyId: string,
     @Param('key') key: string,
     @CurrentUser('id') authorId: string,

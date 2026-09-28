@@ -1,5 +1,5 @@
 import mongoose, { Model, HydratedDocument, Types } from 'mongoose';
-
+// TODO sanitize + проверку и перевод string -> ObjectId
 type QueryFilter<T> = mongoose.QueryFilter<T>;
 type UpdateQuery<T> = mongoose.UpdateQuery<T>;
 type QueryOptions<T> = mongoose.QueryOptions<T>;
