@@ -3,17 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { StoryFacade } from './facades/story.facade';
 import { STORY_PORT } from './ports/story.port';
 import {
-  StoryController,
-  NodeController,
   EdgeController,
+  NodeController,
+  StoryController,
   VariableController,
 } from './controllers';
-import {
-  StoryModel,
-  StoryRepository,
-  StorySchema,
-  StoryService,
-} from './story';
+import { StoryModel, StoryRepository, StorySchema, StoryService } from './core';
 import { NodeModel, NodeRepository, NodeSchema, NodeService } from './node';
 import { EdgeModel, EdgeRepository, EdgeSchema, EdgeService } from './edge';
 import {

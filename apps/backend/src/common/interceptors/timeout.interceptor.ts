@@ -13,10 +13,10 @@ import {
   TimeoutError,
 } from 'rxjs';
 import { PinoLogger } from 'nestjs-pino';
-import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { SpanStatusCode, trace } from '@opentelemetry/api';
 
 import { MetricsService } from '@/infrastructure/observability/metrics.service';
-import { API_RESPONSE_TIMEOUT, API_ERROR } from '../utils';
+import { API_ERROR, API_RESPONSE_TIMEOUT } from '../utils';
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {

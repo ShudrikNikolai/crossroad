@@ -5,11 +5,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { GameService } from '../game/game.service';
+import { GameService } from '../core/game.service';
 import {
   CreateGameDto,
-  UpdateGameNextStepDto,
   GameStepResponseDto,
+  UpdateGameNextStepDto,
 } from '../dtos';
 import { CurrentUser } from '@/common';
 

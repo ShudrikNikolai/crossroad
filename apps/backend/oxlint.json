@@ -2,7 +2,42 @@
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/crates/oxc_linter/src/rules.rs",
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-floating-promises": "warn"
+    "@typescript-eslint/no-floating-promises": "warn",
+    "eslint/sort-imports": [
+      "warn",
+      {
+        "ignoreCase": true,
+        "ignoreDeclarationSort": true,
+        "ignoreMemberSort": true
+      }
+    ],
+    "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/modules/auth/*/**", "!@/modules/auth/ports/**", "!@/modules/auth/*.module"],
+                "message": "Импортируй auth только через ports/ или auth.module.ts"
+              },
+              {
+                "group": ["@/modules/user/*/**", "!@/modules/user/ports/**", "!@/modules/user/*.module"],
+                "message": "Импортируй user только через ports/ или user.module.ts"
+              },
+              {
+                "group": ["@/modules/story/*/**", "!@/modules/story/ports/**", "!@/modules/story/*.module"],
+                "message": "Импортируй story только через ports/ или story.module.ts"
+              },
+              {
+                "group": ["@/modules/game/*/**", "!@/modules/game/*.module"],
+                "message": "У game пока только через ports/ или game.module.ts"
+              },
+              {
+                "group": ["@/modules/media/*/**", "!@/modules/media/ports/**", "!@/modules/media/*.module"],
+                "message": "Импортируй media только через ports/ или media.module.ts"
+              }
+            ]
+          }
+        ]
   },
   "env": {
     "node": true

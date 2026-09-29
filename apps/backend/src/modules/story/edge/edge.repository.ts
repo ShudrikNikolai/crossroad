@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { EdgeModel, EdgeDocument } from './edge.model';
+import { Model } from 'mongoose';
+import { EdgeDocument, EdgeModel } from './edge.model';
 import { BaseModel, BaseRepository } from '@/common';
 
 @Injectable()

@@ -7,12 +7,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PlaythroughRepository } from './game.repository';
-import { STORY_PORT, type IStoryPort } from '@/modules/story/ports/story.port';
+import { type IStoryPort, STORY_PORT } from '@/modules/story/ports/story.port';
 import { RedisService } from '@/infrastructure/redis/redis.service';
 import { EventService } from '@/infrastructure/event/event.service';
 import { evaluateConditions } from '../utils/evaluate-condition.util';
 import {
-  GAME_EVENTS,
+  //GAME_EVENTS,
   PUBLISHED_GRAPH_CACHE_PREFIX,
   PUBLISHED_GRAPH_CACHE_TTL_SECONDS,
 } from '../consts';

@@ -12,6 +12,10 @@ export class StatisticService {
 
   @OnEvent(USER_CREATED_EVENT)
   async handleUserCreated(payload: UserCreatedEvent): Promise<void> {
-    await this.repository.createStat(USER_CREATED_EVENT, payload.userId);
+    try {
+      await this.repository.createStat(USER_CREATED_EVENT, payload.userId);
+    } catch (err) {
+      // this.logger.error('Failed to record user.created stat', err);
+    }
   }
 }

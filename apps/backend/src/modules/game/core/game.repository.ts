@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { PlaythroughModel, PlaythroughDocument } from './game.model';
+import { Model } from 'mongoose';
+import { PlaythroughDocument, PlaythroughModel } from './game.model';
 
 @Injectable()
 export class PlaythroughRepository {

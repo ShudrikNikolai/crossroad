@@ -65,10 +65,10 @@ export class ProfileService {
     return this.repository.toPublic(profile);
   }
 
-  async uploadAvatar(
-    userId: string,
-    data: TAvatarUploadSchema,
-  ): Promise<TMeProfileSchema> {
-    throw new Error('Method not implemented.');
-  }
+  // async uploadAvatar( TODO
+  //   userId: string,
+  //   data: TAvatarUploadSchema,
+  // ): Promise<TMeProfileSchema> {
+  //   throw new Error('Method not implemented.');
+  // }
 }

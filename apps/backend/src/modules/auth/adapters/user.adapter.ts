@@ -1,20 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type { TCreateUserSchema } from '@crossroad/schemas';
 import {
-  IUserAuthPort,
+  type IUserAuthPort,
+  USER_PORT,
   UserAuthView,
-} from '@/modules/user/facades/user.facade';
-import { UserService } from '@/modules/user/user/user.service';
-import { SecurityService } from '@/modules/user/security/security.service';
+} from '@/modules/user/ports/user.port';
 
 @Injectable()
 export class UserAuthAdapter implements IUserAuthPort {
-  constructor(
-    private readonly userService: UserService,
-    private readonly securityService: SecurityService,
-  ) {}
+  constructor(@Inject(USER_PORT) private readonly userService: IUserAuthPort) {}
 
-  // Возвращать интерфес, ан е контракт TODO
   async findById(id: string): Promise<UserAuthView | null> {
     return this.userService.findById(id);
   }
@@ -46,6 +41,6 @@ export class UserAuthAdapter implements IUserAuthPort {
   }
 
   async verifyPassword(userId: string, password: string): Promise<boolean> {
-    return this.securityService.verifyPassword(userId, password);
+    return this.userService.verifyPassword(userId, password);
   }
 }

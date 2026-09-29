@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { EdgeRepository } from './edge.repository';
-import { StoryService } from '../story/story.service';
+import { StoryService } from '../core/story.service';
 import type { TCreateEdgeSchema, TUpdateEdgeSchema } from '@crossroad/schemas';
 
 @Injectable()

@@ -7,8 +7,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { GameService } from '../game/game.service';
-import { PlaythroughRepository } from '../game/game.repository';
+import { GameService } from '../core/game.service';
+import { PlaythroughRepository } from '../core/game.repository';
 import { STORY_PORT } from '@/modules/story/ports/story.port';
 import { RedisService } from '@/infrastructure/redis/redis.service';
 import { EventService } from '@/infrastructure/event/event.service';

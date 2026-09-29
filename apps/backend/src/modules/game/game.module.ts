@@ -6,7 +6,7 @@ import {
   PlaythroughModel,
   PlaythroughRepository,
   PlaythroughSchema,
-} from './game';
+} from './core';
 import { GameController } from './controllers';
 
 @Module({

@@ -4,7 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 
 import { EdgeService } from '../edge/edge.service';
 import { EdgeRepository } from '../edge/edge.repository';
-import { StoryService } from '../story/story.service';
+import { StoryService } from '../core/story.service';
 
 describe('EdgeService', () => {
   let service: EdgeService;

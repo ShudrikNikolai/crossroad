@@ -4,21 +4,21 @@ import {
   SecurityController,
   UserController,
 } from './controllers';
-import { USER_FACADE } from './facades/user.facade';
 import {
   ProfileModel,
-  ProfileSchema,
   ProfileRepository,
+  ProfileSchema,
   ProfileService,
 } from './profile';
 import {
   SecurityModel,
-  SecuritySchema,
   SecurityRepository,
+  SecuritySchema,
   SecurityService,
 } from './security';
-import { UserModel, UserSchema, UserRepository, UserService } from './user';
+import { UserModel, UserRepository, UserSchema, UserService } from './core';
 import { Module } from '@nestjs/common';
+import { USER_PORT } from './ports/user.port';
 
 @Module({
   imports: [
@@ -45,13 +45,12 @@ import { Module } from '@nestjs/common';
     ProfileRepository,
     SecurityService,
     SecurityRepository,
-    // public api
     {
-      provide: USER_FACADE,
+      provide: USER_PORT,
       useExisting: UserService,
     },
   ],
 
-  exports: [USER_FACADE, UserService, SecurityService],
+  exports: [USER_PORT],
 })
 export class UserModule {}

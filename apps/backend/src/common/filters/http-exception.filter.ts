@@ -6,7 +6,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import { PinoLogger } from 'nestjs-pino';
 import { API_ERROR } from '../utils';
 import { IApiResponse, ValidationDetail } from '@crossroad/types';

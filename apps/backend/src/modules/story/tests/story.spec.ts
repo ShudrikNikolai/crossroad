@@ -6,8 +6,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { StoryService } from '../story/story.service';
-import { StoryRepository } from '../story/story.repository';
+import { StoryService } from '../core/story.service';
+import { StoryRepository } from '../core/story.repository';
 
 describe('StoryService', () => {
   let service: StoryService;

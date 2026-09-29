@@ -1,8 +1,8 @@
 import {
-  UpdateProfileSchema,
   AvatarUploadSchema,
-  PublicProfileSchema,
   MeProfileSchema,
+  PublicProfileSchema,
+  UpdateProfileSchema,
 } from '@crossroad/schemas';
 import { createZodDto } from 'nestjs-zod';
 

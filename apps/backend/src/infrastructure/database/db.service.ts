@@ -20,9 +20,9 @@ export class DbService {
         status: 'ok',
         latency,
       };
-    } catch (error) {
+    } catch (e) {
       return {
-        status: 'error',
+        status: `error - ${JSON.stringify(e)}`,
         latency: Date.now() - start,
       };
     }

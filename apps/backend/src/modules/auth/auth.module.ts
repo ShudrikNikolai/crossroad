@@ -4,14 +4,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from '../user/user.module';
 import { UserAuthAdapter } from './adapters/user.adapter';
 import { JwtAuthGuard, RefreshTokenGuard } from './guards';
-import { JwtStrategy, JwtRefreshStrategy } from './strategies';
+import { JwtRefreshStrategy, JwtStrategy } from './strategies';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './controllers/auth.controller';
 import {
   RefreshTokenModel,
+  RefreshTokenRepository,
   RefreshTokenSchema,
   RefreshTokenService,
-  RefreshTokenRepository,
 } from './refresh-token';
 import { AuthService } from './services/auth.service';
 

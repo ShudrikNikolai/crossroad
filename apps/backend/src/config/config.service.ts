@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { CONST } from './cfg';
 import type {
+  IConfigs,
   TAppConfig,
   TAuthConfig,
   TDataBaseConfig,
   TLoggerConfig,
   TRedisConfig,
-  TSwaggerConfig,
-  IConfigs,
   TStorageConfig,
+  TSwaggerConfig,
 } from './cfg';
 
 @Injectable()

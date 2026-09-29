@@ -7,10 +7,10 @@ import {
 } from '@nestjs/swagger';
 import { ProfileService } from '../profile/profile.service';
 import {
+  MeDto,
+  PublicProfileDto,
   UpdateProfileDto,
   UploadAvatarDto,
-  PublicProfileDto,
-  MeDto,
 } from '../dtos';
 import { CurrentUser } from '@/common';
 

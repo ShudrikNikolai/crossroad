@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { NodeRepository } from './node.repository';
-import { StoryService } from '../story/story.service';
+import { StoryService } from '../core/story.service';
 import type { TCreateNodeSchema, TUpdateNodeSchema } from '@crossroad/schemas';
 
 @Injectable()

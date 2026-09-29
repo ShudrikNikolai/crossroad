@@ -1,4 +1,4 @@
-import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { SpanStatusCode, trace } from '@opentelemetry/api';
 
 export function Trace(name?: string): MethodDecorator {
   return (target, propertyKey, descriptor: PropertyDescriptor) => {

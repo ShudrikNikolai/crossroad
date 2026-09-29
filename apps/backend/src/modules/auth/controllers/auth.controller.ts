@@ -17,14 +17,14 @@ import type { Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { RefreshTokenGuard } from '../guards';
 import {
-  RegisterUserDto,
+  AuthResponseDto,
   LoginDto,
   RefreshTokenDto,
-  AuthResponseDto,
+  RegisterUserDto,
 } from '../dtos';
 import { CurrentUser, Public } from '@/common';
 import { ConfigService } from '@/config';
-import { REFRESH_COOKIE_NAME, getRefreshCookieOptions } from '../consts';
+import { getRefreshCookieOptions, REFRESH_COOKIE_NAME } from '../consts';
 
 @ApiTags('auth')
 @Controller('auth')

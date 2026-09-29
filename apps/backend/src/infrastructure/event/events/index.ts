@@ -1,6 +1,7 @@
 import { UserCreatedEvent, USER_CREATED_EVENT } from './user-created.event';
 
-export type PARAMETRS = UserCreatedEvent;
-export type EVENTS = typeof USER_CREATED_EVENT;
+export type EventName = keyof EventMap;
 
-export * from './user-created.event';
+export interface EventMap {
+  [USER_CREATED_EVENT]: UserCreatedEvent;
+}

@@ -71,9 +71,9 @@ export class StoryService {
   }
 
   async getStories(authorId: string) {
-    console.log('authorId > ', authorId)
-    const res = await this.storyRepository.findByAuthor(authorId)
-    return res
+    console.log('authorId > ', authorId);
+    const res = await this.storyRepository.findByAuthor(authorId);
+    return res;
   }
 
   async setStatus(id: string, status: 'draft' | 'published') {

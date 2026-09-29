@@ -14,7 +14,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { EdgeService } from '../edge/edge.service';
-import { CreateEdgeDto, UpdateEdgeDto, EdgeResponseDto } from '../dtos';
+import { CreateEdgeDto, EdgeResponseDto, UpdateEdgeDto } from '../dtos';
 import { CurrentUser } from '@/common';
 
 @ApiTags('story-edges')

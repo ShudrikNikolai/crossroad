@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { StoryModel, StoryDocument } from './story.model';
+import { Model } from 'mongoose';
+import { StoryDocument, StoryModel } from './story.model';
 import { BaseRepository } from '@/common';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class StoryRepository extends BaseRepository<StoryDocument> {
   }
 
   create(data: Pick<StoryModel, 'title' | 'description' | 'authorId'>) {
-    data.authorId = this.toObjectId(`${data.authorId}`)
+    data.authorId = this.toObjectId(`${data.authorId}`);
     return this.model.create(data);
   }
 

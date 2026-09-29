@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { StoryService } from '../story/story.service';
+import { StoryService } from '../core/story.service';
 import type {
   TCreateVariableSchema,
   TUpdateVariableSchema,

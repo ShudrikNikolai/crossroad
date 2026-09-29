@@ -1,21 +1,31 @@
-import mongoose, { Model, HydratedDocument, Types } from 'mongoose';
-// TODO sanitize + проверку и перевод string -> ObjectId
+import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
+
 type QueryFilter<T> = mongoose.QueryFilter<T>;
 type UpdateQuery<T> = mongoose.UpdateQuery<T>;
 type QueryOptions<T> = mongoose.QueryOptions<T>;
 
-export abstract class BaseRepository<T> {
+type response<T> = Omit<T, '_id'> & { id: string };
+
+type BaseDoc = {
+  _id: mongoose.Types.ObjectId;
+  deletedAt?: Date | null;
+};
+
+export abstract class BaseRepository<T extends BaseDoc> {
   protected constructor(protected readonly model: Model<T>) {}
 
-  async create(data: Partial<T>): Promise<HydratedDocument<T>> {
-    return this.model.create(data);
+  async create(rawData: Partial<T>): Promise<response<T>> {
+    const data = this.convertStringIdsToObjectIds(rawData);
+    const document = await this.model.create(data);
+
+    return this.mongoIdToId(document);
   }
 
   async findById(
     id: string,
     options?: QueryOptions<T>,
   ): Promise<HydratedDocument<T> | null> {
-    if (this.isValid(id)) return null;
+    if (this.isInvalidId(id)) return null;
     return this.model.findOne(
       { _id: id, deletedAt: null } as QueryFilter<T>,
       null,
@@ -47,10 +57,12 @@ export abstract class BaseRepository<T> {
 
   async updateById(
     id: string | mongoose.Types.ObjectId,
-    data: UpdateQuery<T>,
+    rawData: UpdateQuery<T>,
     options?: QueryOptions<T>,
   ): Promise<HydratedDocument<T> | null> {
-    if (this.isValid(id)) return null;
+    if (this.isInvalidId(id)) return null;
+    const data = this.updDataIdsToObjectId(rawData);
+
     return this.model.findOneAndUpdate(
       { _id: id, deletedAt: null } as QueryFilter<T>,
       data,
@@ -60,9 +72,10 @@ export abstract class BaseRepository<T> {
 
   async updateOne(
     filter: QueryFilter<T>,
-    data: UpdateQuery<T>,
+    rawData: UpdateQuery<T>,
     options?: QueryOptions<T>,
   ): Promise<HydratedDocument<T> | null> {
+    const data = this.updDataIdsToObjectId(rawData);
     return this.model.findOneAndUpdate(
       { ...filter, deletedAt: null } as QueryFilter<T>,
       data,
@@ -73,7 +86,7 @@ export abstract class BaseRepository<T> {
   async softDeleteById(
     id: string | mongoose.Types.ObjectId,
   ): Promise<HydratedDocument<T> | null> {
-    if (this.isValid(id)) return null;
+    if (this.isInvalidId(id)) return null;
     return this.model.findOneAndUpdate(
       { _id: id, deletedAt: null } as QueryFilter<T>,
       { deletedAt: new Date() } as UpdateQuery<T>,
@@ -84,7 +97,7 @@ export abstract class BaseRepository<T> {
   async restoreById(
     id: string | mongoose.Types.ObjectId,
   ): Promise<HydratedDocument<T> | null> {
-    if (this.isValid(id)) return null;
+    if (this.isInvalidId(id)) return null;
     return this.model.findOneAndUpdate(
       { _id: id, deletedAt: { $ne: null } } as QueryFilter<T>,
       { deletedAt: null } as UpdateQuery<T>,
@@ -93,7 +106,7 @@ export abstract class BaseRepository<T> {
   }
 
   async hardDeleteById(id: string | mongoose.Types.ObjectId): Promise<boolean> {
-    if (this.isValid(id)) return false;
+    if (this.isInvalidId(id)) return false;
     const res = await this.model.deleteOne({ _id: id } as QueryFilter<T>);
     return res.deletedCount > 0;
   }
@@ -137,7 +150,51 @@ export abstract class BaseRepository<T> {
     return new Types.ObjectId(id);
   }
 
-  private isValid(id: string | mongoose.Types.ObjectId): boolean {
+  private isInvalidId(id: string | mongoose.Types.ObjectId): boolean {
     return !mongoose.Types.ObjectId.isValid(id);
+  }
+
+  private updDataIdsToObjectId(data: UpdateQuery<T>): UpdateQuery<T> {
+    const result: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(
+      data as Record<string, unknown>,
+    )) {
+      if (
+        value &&
+        typeof value === 'object' &&
+        !Array.isArray(value) &&
+        key.startsWith('$')
+      ) {
+        result[key] = this.convertStringIdsToObjectIds(
+          value as Record<string, unknown>,
+        );
+      } else {
+        result[key] = value;
+      }
+    }
+
+    return result as UpdateQuery<T>;
+  }
+
+  private convertStringIdsToObjectIds<D extends Record<string, unknown>>(
+    data: D,
+  ): D {
+    const result: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(data)) {
+      if (typeof value === 'string' && mongoose.Types.ObjectId.isValid(value)) {
+        result[key] = this.toObjectId(value);
+      } else {
+        result[key] = value;
+      }
+    }
+
+    return result as D;
+  }
+
+  private mongoIdToId(data: HydratedDocument<T>): response<T> {
+    const { _id, ...rest } = data.toObject();
+    return { ...rest, id: _id.toString() };
   }
 }

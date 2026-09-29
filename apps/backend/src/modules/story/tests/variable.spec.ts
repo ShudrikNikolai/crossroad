@@ -4,7 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 
 import { VariableService } from '../variable/variable.service';
 import { VariableRepository } from '../variable/variable.repository';
-import { StoryService } from '../story/story.service';
+import { StoryService } from '../core/story.service';
 
 describe('VariableService', () => {
   let service: VariableService;

@@ -1,25 +1,17 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { StoryService } from '../story/story.service';
+import { StoryService } from '../core/story.service';
 import { StoryFacade } from '../facades/story.facade';
 import {
   CreateStoryDto,
-  UpdateStoryDto,
-  StoryResponseDto,
   FullGraphResponseDto,
+  StoryResponseDto,
+  UpdateStoryDto,
 } from '../dtos';
 import { CurrentUser } from '@/common';
 
@@ -30,19 +22,22 @@ export class StoryController {
   constructor(
     private readonly storyService: StoryService,
     private readonly storyFacade: StoryFacade,
-  ) { }
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get authros stories' })
   @ApiOkResponse({ type: [StoryResponseDto] })
   async getMyStpries(@CurrentUser('id') authorId: string) {
-    return this.storyService.getStories(authorId)
+    return this.storyService.getStories(authorId);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create a new story' })
   @ApiOkResponse({ type: StoryResponseDto })
-  async create(@CurrentUser('id') authorId: string, @Body() data: CreateStoryDto) {
+  async create(
+    @CurrentUser('id') authorId: string,
+    @Body() data: CreateStoryDto,
+  ) {
     return this.storyService.create(authorId, data);
   }
 

@@ -14,7 +14,7 @@ const infrastructureModules = [
   EventModule,
   // StorageModule,
   // ObservabilityModule,
-  SchedulerModule
+  SchedulerModule,
 ];
 
 @Module({

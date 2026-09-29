@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
 import {
   StatisticModel,
   StatisticSchema,
   StatisticRepository,
   StatisticService,
-} from './stats';
+} from './core';
 
 @Module({
   imports: [

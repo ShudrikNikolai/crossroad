@@ -1,16 +1,11 @@
-import { UserAuthView } from '@/modules/user/facades/user.facade';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-
-export interface AuthRequest extends Request {
-  user: UserAuthView; // TODO
-}
+import type { RequestUser } from '../interfaces/request-user.interface';
 
 export const CurrentUser = createParamDecorator(
-  (data: keyof AuthRequest['user'] | undefined, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest<AuthRequest>();
-
+  (data: string | undefined, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest<RequestUser>();
     const user = request.user;
 
-    return data ? user?.[data] : user;
+    return data ? user?.[data as keyof typeof user] : user;
   },
 );

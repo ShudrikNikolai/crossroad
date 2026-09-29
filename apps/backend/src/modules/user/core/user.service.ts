@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { IUserAuthPort } from '../facades/user.facade';
 import { UserRepository } from './user.repository';
 import {
   TCreateUserSchema,
@@ -9,11 +8,9 @@ import {
 import { ProfileService } from '../profile/profile.service';
 import { SecurityService } from '../security/security.service';
 import { EventService } from '@/infrastructure/event/event.service';
-import {
-  USER_CREATED_EVENT,
-  type UserCreatedEvent,
-} from '@/infrastructure/event/events/user-created.event';
+import { USER_CREATED_EVENT } from '@/infrastructure/event/events/user-created.event';
 import { IUserPublic } from '../dtos';
+import { IUserAuthPort } from '../ports/user.port';
 
 @Injectable()
 export class UserService implements IUserAuthPort {
@@ -35,10 +32,7 @@ export class UserService implements IUserAuthPort {
       return null;
     }
 
-    return {
-      id: user._id.toString(),
-      email: user.email,
-    };
+    return this.getUserPublic(user);
   }
 
   async findByEmail(email: string): Promise<IUserPublic | null> {
@@ -48,10 +42,7 @@ export class UserService implements IUserAuthPort {
       return null;
     }
 
-    return {
-      id: user._id.toString(),
-      email: user.email,
-    };
+    return this.getUserPublic(user);
   }
 
   async createUser(data: TCreateUserSchema): Promise<IUserPublic | null> {
@@ -61,19 +52,16 @@ export class UserService implements IUserAuthPort {
     });
 
     await Promise.all([
-      this.serviceSecurity.createPassword(user._id.toString(), data.password),
-      this.serviceProfile.create(user._id.toString(), data.username),
+      this.serviceSecurity.createPassword(user.id, data.password),
+      this.serviceProfile.create(user.id, data.username),
     ]);
 
-    await this.eventService.emitAsync<UserCreatedEvent>(USER_CREATED_EVENT, {
-      userId: user._id.toString(),
+    this.eventService.emit(USER_CREATED_EVENT, {
+      userId: user.id,
       email: user.email,
     });
 
-    return {
-      id: user._id.toString(),
-      email: user.email,
-    };
+    return this.getUserPublic(user);
   }
 
   async updatePhoneNumber(
@@ -90,5 +78,12 @@ export class UserService implements IUserAuthPort {
   ): Promise<boolean> {
     const updEmail = await this.repository.updateById(id, data);
     return !!updEmail;
+  }
+
+  private getUserPublic(data: any): IUserPublic {
+    return {
+      id: data.id,
+      email: data.email,
+    };
   }
 }

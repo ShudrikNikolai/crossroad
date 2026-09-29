@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   HealthCheck,
   HealthCheckService,
- HttpHealthIndicator,
+  HttpHealthIndicator,
 } from '@nestjs/terminus';
 import { HealthService } from '../services/health.service';
 import { Public } from '@/common';

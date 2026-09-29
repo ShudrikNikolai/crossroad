@@ -1,9 +1,9 @@
 import { createZodDto } from 'nestjs-zod';
 import {
   CreateStorySchema,
-  UpdateStorySchema,
   FullGraphResponseSchema,
   StoryResponseSchema,
+  UpdateStorySchema,
 } from '@crossroad/schemas';
 
 export class CreateStoryDto extends createZodDto(CreateStorySchema) {}

@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { MinioClient } from './minio.client';
-import { IStorage, UploadPolicy, UploadPolicyRequest, StorageUpload, StorageObject} from '../storage.interface';
+import {
+  IStorage,
+  StorageObject,
+  StorageUpload,
+  UploadPolicy,
+  UploadPolicyRequest,
+} from '../storage.interface';
 
 @Injectable()
 export class MinioStorage implements IStorage {
@@ -69,7 +75,8 @@ export class MinioStorage implements IStorage {
     policy.setContentLengthRange(1, maxSizeBytes);
     policy.setExpires(new Date(Date.now() + expiresIn * 1000));
 
-    const { postURL, formData } = await this.minio.client.presignedPostPolicy(policy);
+    const { postURL, formData } =
+      await this.minio.client.presignedPostPolicy(policy);
     return { url: postURL, fields: formData };
   }
 }

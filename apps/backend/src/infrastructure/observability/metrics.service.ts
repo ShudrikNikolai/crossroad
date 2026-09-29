@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { metrics, Counter, Histogram } from '@opentelemetry/api';
-
+import { metrics } from '@opentelemetry/api';
+// TODO
 @Injectable()
 export class MetricsService {
   private readonly meter = metrics.getMeter('crossroad');

@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
-import { UserAuthView } from '@/modules/user/facades/user.facade';
 import { ConfigService } from '@/config';
 import { EventService } from '@/infrastructure/event/event.service';
 import { Tokens } from '../interfaces';
@@ -13,6 +12,7 @@ import { API_AUTH_ERROR } from '@/common';
 import { UserAuthAdapter } from '../adapters/user.adapter';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { IRegisterUser } from '../dtos';
+import { UserAuthView } from '@/modules/user/ports/user.port';
 
 @Injectable()
 export class AuthService {

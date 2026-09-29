@@ -4,8 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventService } from '@/infrastructure/event/event.service';
 import { ProfileService } from '../profile/profile.service';
 import { SecurityService } from '../security/security.service';
-import { UserRepository } from '../user/user.repository';
-import { UserService } from '../user/user.service';
+import { UserRepository } from '../core/user.repository';
+import { UserService } from '../core/user.service';
 
 describe('UserService', () => {
   let service: UserService;

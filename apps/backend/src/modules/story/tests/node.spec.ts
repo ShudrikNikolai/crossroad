@@ -4,7 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 
 import { NodeService } from '../node/node.service';
 import { NodeRepository } from '../node/node.repository';
-import { StoryService } from '../story/story.service';
+import { StoryService } from '../core/story.service';
 
 describe('NodeService', () => {
   let service: NodeService;

@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { StoryService } from '../story/story.service';
+import { StoryService } from '../core/story.service';
 import { NodeService } from '../node/node.service';
 import { EdgeService } from '../edge/edge.service';
 import { VariableService } from '../variable/variable.service';
