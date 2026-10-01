@@ -39,10 +39,6 @@ export class RefreshTokenModel extends BaseModel {
     default: null,
   })
   revokedAt: Date | null;
-
-  isValid(): boolean {
-    return this.revokedAt === null && this.expiresAt.getTime() > Date.now();
-  }
 }
 
 export const RefreshTokenSchema =

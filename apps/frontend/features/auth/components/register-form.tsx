@@ -35,13 +35,13 @@ export function RegisterForm() {
     try {
       const tokens = await register({ username, email, password, confirmPassword: password });
       if (!tokens) {
-        throw new Error('invalid tokens')
+        throw new Error('invalid tokens');
       }
       setAccessToken(tokens.accessToken);
 
       const user = await getMe();
       if (!user) {
-        throw new Error('user is failed')
+        throw new Error('user is failed');
       }
       setUser(user);
 

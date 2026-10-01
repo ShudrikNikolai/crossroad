@@ -14,11 +14,11 @@ type BaseDoc = {
 export abstract class BaseRepository<T extends BaseDoc> {
   protected constructor(protected readonly model: Model<T>) {}
 
-  async create(rawData: Partial<T>): Promise<response<T>> {
+  async createDocument(rawData: Partial<T>): Promise<HydratedDocument<T>> {
     const data = this.convertStringIdsToObjectIds(rawData);
     const document = await this.model.create(data);
 
-    return this.mongoIdToId(document);
+    return document;
   }
 
   async findById(
@@ -34,9 +34,10 @@ export abstract class BaseRepository<T extends BaseDoc> {
   }
 
   async findOne(
-    filter: QueryFilter<T>,
+    rawFilter: QueryFilter<T>,
     options?: QueryOptions<T>,
   ): Promise<HydratedDocument<T> | null> {
+    const filter = this.convertFilterIdsToObjectIds(rawFilter)
     return this.model.findOne(
       { ...filter, deletedAt: null } as QueryFilter<T>,
       null,
@@ -45,9 +46,13 @@ export abstract class BaseRepository<T extends BaseDoc> {
   }
 
   async findMany(
-    filter: QueryFilter<T>,
+    rawFilter: QueryFilter<T>,
     options?: QueryOptions<T>,
   ): Promise<HydratedDocument<T>[]> {
+    console.log('rawFilter >>>', rawFilter)
+    const filter = this.convertFilterIdsToObjectIds(rawFilter)
+    console.log('filter >>>', filter)
+
     return this.model.find(
       { ...filter, deletedAt: null } as QueryFilter<T>,
       null,
@@ -71,10 +76,11 @@ export abstract class BaseRepository<T extends BaseDoc> {
   }
 
   async updateOne(
-    filter: QueryFilter<T>,
+    rawFilter: QueryFilter<T>,
     rawData: UpdateQuery<T>,
     options?: QueryOptions<T>,
   ): Promise<HydratedDocument<T> | null> {
+    const filter = this.convertFilterIdsToObjectIds(rawFilter)
     const data = this.updDataIdsToObjectId(rawData);
     return this.model.findOneAndUpdate(
       { ...filter, deletedAt: null } as QueryFilter<T>,
@@ -111,7 +117,8 @@ export abstract class BaseRepository<T extends BaseDoc> {
     return res.deletedCount > 0;
   }
 
-  async exists(filter: QueryFilter<T>): Promise<boolean> {
+  async exists(rawFilter: QueryFilter<T>): Promise<boolean> {
+    const filter = this.convertFilterIdsToObjectIds(rawFilter)
     const res = await this.model.exists({
       ...filter,
       deletedAt: null,
@@ -119,7 +126,8 @@ export abstract class BaseRepository<T extends BaseDoc> {
     return res !== null;
   }
 
-  async count(filter: QueryFilter<T> = {} as QueryFilter<T>): Promise<number> {
+  async count(rawFilter: QueryFilter<T> = {} as QueryFilter<T>): Promise<number> {
+    const filter = this.convertFilterIdsToObjectIds(rawFilter)
     return this.model.countDocuments({
       ...filter,
       deletedAt: null,
@@ -127,7 +135,7 @@ export abstract class BaseRepository<T extends BaseDoc> {
   }
 
   async paginate(
-    filter: QueryFilter<T>,
+    rawFilter: QueryFilter<T>,
     page = 1,
     limit = 20,
     options?: QueryOptions<T>,
@@ -137,6 +145,7 @@ export abstract class BaseRepository<T extends BaseDoc> {
     page: number;
     pages: number;
   }> {
+    const filter = this.convertFilterIdsToObjectIds(rawFilter)
     const skip = (page - 1) * limit;
     const scopedFilter = { ...filter, deletedAt: null } as QueryFilter<T>;
     const [items, total] = await Promise.all([
@@ -144,6 +153,10 @@ export abstract class BaseRepository<T extends BaseDoc> {
       this.model.countDocuments(scopedFilter),
     ]);
     return { items, total, page, pages: Math.ceil(total / limit) };
+  }
+
+  toPublic(doc: HydratedDocument<T>): response<T> {
+    return this.mongoIdToId(doc);
   }
 
   toObjectId(id: string): Types.ObjectId {
@@ -193,8 +206,21 @@ export abstract class BaseRepository<T extends BaseDoc> {
     return result as D;
   }
 
+  private convertFilterIdsToObjectIds(filter: Record<string, unknown>): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(filter)) {
+      if (typeof value === 'string' && mongoose.Types.ObjectId.isValid(value)) {
+        result[key] = this.toObjectId(value);
+      } else {
+        result[key] = value;
+      }
+    }
+    return result;
+  }
+
   private mongoIdToId(data: HydratedDocument<T>): response<T> {
+    console.log(' >>>>', data)
     const { _id, ...rest } = data.toObject();
-    return { ...rest, id: _id.toString() };
+    return { ...rest, id: _id.toString() } as response<T>;
   }
 }

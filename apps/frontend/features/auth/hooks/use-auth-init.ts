@@ -31,7 +31,7 @@ export function useAuthInit(): void {
 
         const user = await getMe();
         if (!user) {
-          throw new Error('user is failed')
+          throw new Error('user is failed');
         }
 
         if (!cancelled) {

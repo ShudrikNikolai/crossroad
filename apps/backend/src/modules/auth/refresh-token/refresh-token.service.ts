@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Types } from 'mongoose';
 import { RefreshTokenRepository } from './refresh-token.repository';
 import { RefreshTokenDocument } from './refresh-token.model';
 import { bcryptCompare, bcryptHash } from '@/common';
+
+type ResponseRefreshToken = Omit<RefreshTokenDocument, '_id'> & { id: string };
 
 @Injectable()
 export class RefreshTokenService {
@@ -13,27 +14,31 @@ export class RefreshTokenService {
     jti: string,
     token: string,
     expiresAt: Date,
-  ): Promise<RefreshTokenDocument> {
+  ): Promise<ResponseRefreshToken> {
     const tokenHash = await bcryptHash(token);
 
-    return this.repository.create({
-      userId: new Types.ObjectId(userId),
+    const tokenDoc = await this.repository.createDocument({
+      userId: userId as any, // TODO фиксануть типизацию в baseRep
       jti,
       tokenHash,
       expiresAt,
       revokedAt: null,
     });
+    return this.repository.toPublic(tokenDoc);
   }
 
-  async findByJti(jti: string): Promise<RefreshTokenDocument | null> {
-    return this.repository.findByJti(jti);
+  async findByJti(jti: string): Promise<ResponseRefreshToken | null> {
+    return this.repository.findByJti(jti)
   }
 
   async verify(
     token: string,
-    refreshToken: RefreshTokenDocument,
+    refreshToken: Pick<
+      RefreshTokenDocument,
+      'revokedAt' | 'expiresAt' | 'tokenHash'
+    >,
   ): Promise<boolean> {
-    if (!refreshToken.isValid()) {
+    if (!this.isValid(refreshToken.revokedAt, refreshToken.expiresAt)) {
       return false;
     }
 
@@ -50,5 +55,9 @@ export class RefreshTokenService {
 
   async cleanup(): Promise<void> {
     await this.repository.deleteExpired();
+  }
+
+  private isValid(revokedAt: Date | null, expiresAt: Date): boolean {
+    return revokedAt === null && expiresAt.getTime() > Date.now();
   }
 }

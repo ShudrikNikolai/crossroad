@@ -15,17 +15,19 @@ import type {
 export class StoryService {
   constructor(private readonly storyRepository: StoryRepository) {}
 
-  async findById(id: string): Promise<StoryDocument> {
+  async findById(id: string): Promise<any> {
     const story = await this.storyRepository.findById(id);
     if (!story) throw new NotFoundException('API_STORY_ERROR.NOT_FOUND');
-    return story;
+    return this.storyRepository.toPublic(story);
   }
 
-  findByAuthor(authorId: string) {
-    return this.storyRepository.findByAuthor(authorId);
+  async findByAuthor(authorId: string): Promise<any[]> {
+    const authorStories = await this.storyRepository.findByAuthor(authorId);
+    console.log('authorStories >>>', authorStories)
+    return authorStories.map((story) => this.storyRepository.toPublic(story));
   }
 
-  create(authorId: string, data: TCreateStorySchema) {
+  async create(authorId: string, data: TCreateStorySchema): Promise<any> {
     return this.storyRepository.create({
       title: data.title,
       description: data.description,
@@ -35,7 +37,8 @@ export class StoryService {
 
   async update(id: string, authorId: string, data: TUpdateStorySchema) {
     await this.assertEditable(id, authorId); // draft + владение
-    return this.storyRepository.updateById(id, data);
+    const upd = await this.storyRepository.updateById(id, data);
+    return this.storyRepository.toPublic(upd as any)
   }
 
   /**
@@ -45,7 +48,7 @@ export class StoryService {
   async assertEditable(
     storyId: string,
     authorId: string,
-  ): Promise<StoryDocument> {
+  ): Promise<any> {
     const story = await this.findById(storyId);
 
     if (story.authorId.toString() !== authorId) {
@@ -62,7 +65,7 @@ export class StoryService {
   async assertOwnership(
     storyId: string,
     authorId: string,
-  ): Promise<StoryDocument> {
+  ): Promise<any> {
     const story = await this.findById(storyId);
     if (story.authorId.toString() !== authorId) {
       throw new ForbiddenException('API_STORY_ERROR.NOT_OWNER');
@@ -72,7 +75,9 @@ export class StoryService {
 
   async getStories(authorId: string) {
     console.log('authorId > ', authorId);
-    const res = await this.storyRepository.findByAuthor(authorId);
+    const res = await this.findByAuthor(authorId);
+    console.log('res >>>', res)
+
     return res;
   }
 

@@ -14,7 +14,7 @@ export class RefreshTokenRepository extends BaseRepository<RefreshTokenDocument>
   }
 
   async findByJti(jti: string): Promise<RefreshTokenDocument | null> {
-    return this.model.findOne({ jti }).exec();
+    return this.model.findOne({ jti });
   }
 
   async revoke(jti: string): Promise<void> {
@@ -29,11 +29,9 @@ export class RefreshTokenRepository extends BaseRepository<RefreshTokenDocument>
   }
 
   async revokeByUserId(userId: string): Promise<void> {
-    const id = new Types.ObjectId(userId);
-
     await this.model.updateMany(
       {
-        userId: id,
+        userId,
         revokedAt: null,
       },
       {

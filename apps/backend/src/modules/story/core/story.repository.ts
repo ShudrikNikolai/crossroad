@@ -10,14 +10,12 @@ export class StoryRepository extends BaseRepository<StoryDocument> {
     super(model);
   }
 
-  findByAuthor(aId: string) {
-    const authorId = this.toObjectId(aId);
-    return this.model.find({ authorId }).lean();
+  findByAuthor(authorId: string) {
+    return this.findMany({ authorId });
   }
 
   create(data: Pick<StoryModel, 'title' | 'description' | 'authorId'>) {
-    data.authorId = this.toObjectId(`${data.authorId}`);
-    return this.model.create(data);
+    return this.createDocument(data);
   }
 
   updateById(

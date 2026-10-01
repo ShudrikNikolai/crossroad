@@ -42,7 +42,7 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
 
   async createProfile(uId: string, username: string): Promise<void> {
     const userId = this.toObjectId(uId);
-    await this.create({
+    await this.createDocument({
       userId,
       username,
     });
@@ -70,7 +70,7 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
     );
   }
 
-  toPublic(data: ProfileDocument): TPublicProfileSchema {
+  toProfilePublic(data: ProfileDocument): TPublicProfileSchema {
     return {
       id: data._id.toString(),
       username: data.username,
@@ -84,9 +84,9 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
     };
   }
 
-  toPrivate(data: ProfileDocument): TPrivateProfileSchema {
+  toProfilePrivate(data: ProfileDocument): TPrivateProfileSchema {
     return {
-      ...this.toPublic(data),
+      ...this.toProfilePublic(data),
       userId: data.userId?.toString(),
       isPublic: data.isPublic,
       updatedAt: data.updatedAt.toISOString(),

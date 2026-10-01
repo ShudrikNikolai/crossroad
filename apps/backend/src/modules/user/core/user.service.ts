@@ -46,7 +46,7 @@ export class UserService implements IUserAuthPort {
   }
 
   async createUser(data: TCreateUserSchema): Promise<IUserPublic | null> {
-    const user = await this.repository.create({
+    const user = await this.repository.createDocument({
       email: data.email,
       isActive: true,
     });

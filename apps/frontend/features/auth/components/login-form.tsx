@@ -35,14 +35,14 @@ export function LoginForm() {
         password,
       });
       if (!tokens) {
-        throw new Error('login is failed')
+        throw new Error('login is failed');
       }
 
       setAccessToken(tokens.accessToken);
 
       const user = await getMe();
       if (!user) {
-        throw new Error('user is failed')
+        throw new Error('user is failed');
       }
       setUser(user);
 
@@ -59,8 +59,7 @@ export function LoginForm() {
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Добро пожаловать</h1>
 
-        <p className="mt-2 text-muted">
-          Войдите, чтобы продолжить работу с Crossroad.</p>
+        <p className="mt-2 text-muted">Войдите, чтобы продолжить работу с Crossroad.</p>
       </div>
 
       <Form className="flex flex-col gap-5" onSubmit={handleSubmit}>

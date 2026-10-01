@@ -37,15 +37,15 @@ export class ProfileController {
     return this.profileService.updateMe(userId, data);
   }
 
-  @Post('me/avatar')
-  @ApiOperation({ summary: 'Upload profile avatar' })
-  @ApiOkResponse({ type: MeDto })
-  async uploadAvatar(
-    @CurrentUser('id') userId: string,
-    @Body() data: UploadAvatarDto,
-  ) {
-    return this.profileService.uploadAvatar(userId, data);
-  }
+  // @Post('me/avatar') TODO
+  // @ApiOperation({ summary: 'Upload profile avatar' })
+  // @ApiOkResponse({ type: MeDto })
+  // async uploadAvatar(
+  //   @CurrentUser('id') userId: string,
+  //   @Body() data: UploadAvatarDto,
+  // ) {
+  //   return this.profileService.uploadAvatar(userId, data);
+  // }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get public profile by user id' })

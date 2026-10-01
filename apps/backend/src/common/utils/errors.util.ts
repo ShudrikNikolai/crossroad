@@ -24,3 +24,14 @@ export const API_AUTH_ERROR = {
   USER_ALREADY_EXISTS: 'user is exists',
   INVALID_CREDENTIALS: 'invalid credentials',
 };
+
+export const API_MEDIA_ERROR = {
+  UNSUPPORTED_CONTENT_TYPE: 'MEDIA_UNSUPPORTED_CONTENT_TYPE',
+  FILE_TOO_LARGE: 'MEDIA_FILE_TOO_LARGE',
+  NOT_FOUND: 'MEDIA_NOT_FOUND',
+  NOT_OWNER: 'MEDIA_NOT_OWNER',
+  UPLOAD_NOT_FOUND: 'MEDIA_UPLOAD_NOT_FOUND',
+} as const;
+
+export type ApiMediaError =
+  (typeof API_MEDIA_ERROR)[keyof typeof API_MEDIA_ERROR];

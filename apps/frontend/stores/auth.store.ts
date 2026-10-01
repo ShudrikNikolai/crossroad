@@ -70,7 +70,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   clearAuth: () => {
-    console.log('clear User')
+    console.log('clear User');
     persistAccessToken(null);
     set({
       user: null,

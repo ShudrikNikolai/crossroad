@@ -15,7 +15,7 @@ export class StatisticRepository extends BaseRepository<StatisticDocument> {
 
   async createStat(type: string, uId: string): Promise<void> {
     const userId = this.toObjectId(uId);
-    await this.create({
+    await this.createDocument({
       type,
       userId,
     });

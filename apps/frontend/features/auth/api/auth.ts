@@ -7,7 +7,7 @@ export async function login(data: LoginRequest): Promise<AuthResponse | undefine
     const response = await api.post<ApiResponse<AuthResponse>>('/auth/login', data);
     return response.data.data;
   } catch (e) {
-    console.log(e)
+    console.log(e);
     return;
   }
 }
