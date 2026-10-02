@@ -3,6 +3,7 @@ import { NodeContentSchema, NodeTypeSchema, PositionSchema } from './create.sche
 
 export const NodeResponseSchema = z.object({
   storyId: z.string(),
+  title: z.string(),
   id: z.string(),
   type: NodeTypeSchema,
   position: PositionSchema,

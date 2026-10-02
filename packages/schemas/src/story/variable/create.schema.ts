@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const VariableTypeSchema = z.enum(['string', 'number', 'boolean']);
 
 export const CreateVariableSchema = z.object({
-  key: z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, 'Must be a valid identifier'),
+  key: z.string(),
   type: VariableTypeSchema,
   defaultValue: z.union([z.string(), z.number(), z.boolean()]),
 }).refine(

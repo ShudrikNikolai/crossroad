@@ -8,6 +8,7 @@ export const PositionSchema = z.object({
 });
 
 export const NodeContentSchema = z.object({
+  title: z.string().trim().max(100).optional(),
   text: z.string().trim().max(5000),
   speaker: z.string().trim().max(100).optional(),
   mediaKey: z.string().optional(), // ключ на объект в MinIO, не сам файл
@@ -18,6 +19,7 @@ export const CreateNodeSchema = z.object({
   id: z.string().min(1), // локальный id узла, генерируется на клиенте (React Flow)
   type: NodeTypeSchema,
   position: PositionSchema,
+  title: z.string().trim().max(100).optional(),
   content: NodeContentSchema,
 });
 

@@ -4,7 +4,7 @@ import { RedisModule } from './redis/redis.module';
 import { DbModule } from './database/db.module';
 import { EventModule } from './event/event.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
-// import { StorageModule } from './storage/storage.module';
+import { StorageModule } from './storage/storage.module';
 // import { ObservabilityModule } from './observability/observability.module';
 
 const infrastructureModules = [
@@ -12,7 +12,7 @@ const infrastructureModules = [
   DbModule,
   RedisModule,
   EventModule,
-  // StorageModule,
+  StorageModule,
   // ObservabilityModule,
   SchedulerModule,
 ];

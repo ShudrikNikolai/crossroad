@@ -19,6 +19,7 @@ import { setupSwagger } from './common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
+    //routeConflictPolicy: { duplicate: 'error', shadow: 'warn' },
     bufferLogs: true,
   });
 

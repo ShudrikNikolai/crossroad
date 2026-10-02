@@ -21,6 +21,8 @@ export const UpdateProfileSchema = z.object({
     .array(z.string().length(2, 'Language code must be 2 characters'))
     .optional(),
 
+  avatarUrl: z.string().url().optional(),
+
   // Социальные ссылки
   socialLinks: SocialLinksSchema,
 }).strict(); // Запрещаем неожиданные поля

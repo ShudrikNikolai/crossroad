@@ -11,10 +11,19 @@ export const MEDIA_RULES = {
     maxSizeBytes: 2 * MB,
   },
   'story-media': {
-    allowedTypes: ['image/jpeg', 'image/png', 'image/webp', 'audio/mpeg', 'audio/ogg'],
+    allowedTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'audio/mpeg',
+      'audio/ogg',
+    ],
     maxSizeBytes: 15 * MB,
   },
-} as const satisfies Record<TMediaPurpose, { allowedTypes: readonly string[]; maxSizeBytes: number }>;
+} as const satisfies Record<
+  TMediaPurpose,
+  { allowedTypes: readonly string[]; maxSizeBytes: number }
+>;
 
 export const EXTENSION_BY_CONTENT_TYPE: Record<string, string> = {
   'image/jpeg': 'jpg',

@@ -6,8 +6,7 @@ export const UploadUrlResponseSchema = z
     mediaId: z.string(),
     url: z.string(),
     fields: z.record(z.string(), z.string()),
-  })
-  .meta({ id: 'UploadUrlResponse' });
+  });
 
 export const MediaResponseSchema = z
   .object({
@@ -18,8 +17,7 @@ export const MediaResponseSchema = z
     contentType: z.string(),
     url: z.string().optional(), // только для confirmed
     createdAt: z.iso.datetime(),
-  })
-  .meta({ id: 'MediaResponse' });
+  });
 
 export type TUploadUrlResponse = z.infer<typeof UploadUrlResponseSchema>;
 export type TMediaResponse = z.infer<typeof MediaResponseSchema>;

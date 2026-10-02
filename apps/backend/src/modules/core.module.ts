@@ -5,6 +5,7 @@ import { StatisticModule } from './statistic/statistic.module';
 import { AuthModule } from './auth/auth.module';
 import { GameModule } from './game/game.module';
 import { StoryModule } from './story/story.module';
+import { MediaModule } from './media/media.module';
 
 const modules = [
   HealthModule,
@@ -13,6 +14,7 @@ const modules = [
   AuthModule,
   StoryModule,
   GameModule,
+  MediaModule,
 ];
 
 @Module({
