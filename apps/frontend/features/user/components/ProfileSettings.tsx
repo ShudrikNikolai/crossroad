@@ -4,14 +4,104 @@ import { useEffect, useState } from 'react';
 import { Button, Form } from '@heroui/react';
 import { getProfile, updateProfile } from '@/features/user/api/profile';
 import { updateEmail, updatePassword, updatePhone } from '@/features/user/api/security';
-import type { UserProfile } from '@/features/user/types/user.types';
-import { AvatarPlaceholder } from './avatar-placeholder';
+import type { UserProfile, UpdateProfileRequest } from '@/features/user/types/user.types';
+import { AvatarPlaceholder } from './AavatarPlaceholder';
 import { useAuthStore } from '@/stores/auth.store';
 import { Field } from '@/components/ui/re/field';
+
+interface ProfileFormState {
+  username: string;
+  displayName: string;
+  bio: string;
+  languages: string;
+  isPublic: boolean;
+  twitter: string;
+  github: string;
+  linkedin: string;
+  telegram: string;
+  avatarUrl?: string;
+}
+
+function profileToFormState(profile: UserProfile): ProfileFormState {
+  return {
+    username: profile.username ?? '',
+    displayName: profile.displayName ?? '',
+    bio: profile.bio ?? '',
+    languages: profile.languages?.join(', ') ?? '',
+    isPublic: profile.isPublic ?? true,
+    twitter: profile.socialLinks?.twitter ?? '',
+    github: profile.socialLinks?.github ?? '',
+    linkedin: profile.socialLinks?.linkedin ?? '',
+    telegram: profile.socialLinks?.telegram ?? '',
+    avatarUrl: profile.avatarUrl,
+  };
+}
+
+function normalizeLanguages(value: string): string[] {
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function buildProfilePatch(
+  initial: ProfileFormState,
+  current: ProfileFormState,
+): UpdateProfileRequest {
+  const patch: UpdateProfileRequest = {};
+
+  if (initial.username !== current.username) {
+    patch.username = current.username;
+  }
+
+  if (initial.displayName !== current.displayName) {
+    patch.displayName = current.displayName;
+  }
+
+  if (initial.bio !== current.bio) {
+    patch.bio = current.bio;
+  }
+
+  if (initial.isPublic !== current.isPublic) {
+    patch.isPublic = current.isPublic;
+  }
+
+  const initialLanguages = normalizeLanguages(initial.languages);
+  const currentLanguages = normalizeLanguages(current.languages);
+
+  if (JSON.stringify(initialLanguages) !== JSON.stringify(currentLanguages)) {
+    patch.languages = currentLanguages;
+  }
+
+  const initialSocialLinks = {
+    twitter: initial.twitter,
+    github: initial.github,
+    linkedin: initial.linkedin,
+    telegram: initial.telegram,
+  };
+
+  const currentSocialLinks = {
+    twitter: current.twitter,
+    github: current.github,
+    linkedin: current.linkedin,
+    telegram: current.telegram,
+  };
+
+  if (JSON.stringify(initialSocialLinks) !== JSON.stringify(currentSocialLinks)) {
+    patch.socialLinks = currentSocialLinks;
+  }
+
+  if (initial.avatarUrl !== current.avatarUrl) {
+    patch.avatarUrl = current.avatarUrl;
+  }
+
+  return patch;
+}
 
 export function ProfileSettings() {
   const setUser = useAuthStore((state) => state.setUser);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [initialForm, setInitialForm] = useState<ProfileFormState | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -35,19 +125,24 @@ export function ProfileSettings() {
 
   useEffect(() => {
     let cancelled = false;
+
     void getProfile()
       .then((data) => {
         if (cancelled || !data) return;
+
+        const form = profileToFormState(data);
+
         setProfile(data);
-        setUsername(data.username ?? '');
-        setDisplayName(data.displayName ?? '');
-        setBio(data.bio ?? '');
-        setLanguages(data.languages?.join(', ') ?? '');
-        setIsPublic(data.isPublic ?? true);
-        setTwitter(data.socialLinks?.twitter ?? '');
-        setGithub(data.socialLinks?.github ?? '');
-        setLinkedin(data.socialLinks?.linkedin ?? '');
-        setTelegram(data.socialLinks?.telegram ?? '');
+        setInitialForm(form);
+        setUsername(form.username);
+        setDisplayName(form.displayName);
+        setBio(form.bio);
+        setLanguages(form.languages);
+        setIsPublic(form.isPublic);
+        setTwitter(form.twitter);
+        setGithub(form.github);
+        setLinkedin(form.linkedin);
+        setTelegram(form.telegram);
       })
       .catch(() => {
         if (!cancelled) setError('Не удалось загрузить профиль.');
@@ -55,6 +150,7 @@ export function ProfileSettings() {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+
     return () => {
       cancelled = true;
     };
@@ -65,30 +161,76 @@ export function ProfileSettings() {
     setError(null);
   }
 
+  function getCurrentFormState(): ProfileFormState {
+    return {
+      username,
+      displayName,
+      bio,
+      languages,
+      isPublic,
+      twitter,
+      github,
+      linkedin,
+      telegram,
+      avatarUrl: profile?.avatarUrl,
+    };
+  }
+
   async function saveProfile(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     clearStatus();
+
+    if (!initialForm) return;
+
+    const currentForm = getCurrentFormState();
+    const patch = buildProfilePatch(initialForm, currentForm);
+
+    if (Object.keys(patch).length === 0) {
+      setMessage('Изменений нет.');
+      return;
+    }
+
     setSavingSection('profile');
+
     try {
-      const data = await updateProfile({
-        username,
-        displayName,
-        bio,
-        isPublic,
-        languages: languages
-          .split(',')
-          .map((item) => item.trim())
-          .filter(Boolean),
-        socialLinks: { twitter, github, linkedin, telegram },
-      });
+      const data = await updateProfile(patch);
+
       if (!data) {
         throw new Error();
       }
+
+      const form = profileToFormState(data);
+
       setProfile(data);
+      setInitialForm(form);
       setUser(data);
-      setMessage('Основные данные профиля сохранены.');
+      setMessage('Изменения профиля сохранены.');
     } catch {
-      setError('Не удалось сохранить данные профиля. Проверьте значения полей.');
+      setError('Не удалось сохранить изменения профиля. Проверьте значения полей.');
+    } finally {
+      setSavingSection(null);
+    }
+  }
+
+  async function handleAvatarUploaded(avatarUrl: string) {
+    clearStatus();
+    setSavingSection('avatar');
+
+    try {
+      const data = await updateProfile({ avatarUrl });
+
+      if (!data) {
+        throw new Error();
+      }
+
+      const form = profileToFormState(data);
+
+      setProfile(data);
+      setInitialForm(form);
+      setUser(data);
+      setMessage('Аватар обновлён.');
+    } catch {
+      setError('Изображение загружено, но не удалось обновить профиль.');
     } finally {
       setSavingSection(null);
     }
@@ -151,7 +293,12 @@ export function ProfileSettings() {
 
   return (
     <div className="space-y-6">
-      {profile && <AvatarPlaceholder user={profile} />}
+      {profile && (
+        <AvatarPlaceholder
+          user={profile}
+          onAvatarUploaded={handleAvatarUploaded}
+        />
+      )}
 
       {(message || error) && (
         <div

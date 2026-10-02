@@ -19,7 +19,7 @@ export const MeProfileSchema = z.object({
   languages: z.array(z.string().length(2, 'Language code must be 2 characters')).default(['ru']),
 
   // Социальные ссылки
-  socialLinks: SocialLinksSchema,
+  socialLinks: SocialLinksSchema.optional(),
   // meta
   updatedAt: z.iso.datetime(),
 });

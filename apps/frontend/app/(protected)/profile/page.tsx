@@ -1,4 +1,4 @@
-import { ProfileSettings } from '@/features/user/components/profile-settings';
+import { ProfileSettings } from '@/features/user/components/ProfileSettings';
 
 export default function ProfilePage() {
   return (

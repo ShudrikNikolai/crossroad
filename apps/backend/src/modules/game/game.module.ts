@@ -11,7 +11,7 @@ import { GameController } from './controllers';
 
 @Module({
   imports: [
-    StoryModule, // нужен ради экспортированного STORY_PORT
+    StoryModule,
     MongooseModule.forFeature([
       { name: PlaythroughModel.name, schema: PlaythroughSchema },
     ]),

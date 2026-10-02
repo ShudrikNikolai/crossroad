@@ -70,8 +70,6 @@ export class AuthController {
     @Body() data: RefreshTokenDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    // data.refreshToken остаётся для клиентов без cookie (мобильные/сторонние API-консьюмеры);
-    // веб-клиент получит тот же токен из req.cookies через стратегию, тело может быть пустым
     const result = await this.authService.refresh(userId, data.refreshToken);
     this.setRefreshCookie(res, result.refreshToken);
     return { accessToken: result.accessToken };

@@ -1,5 +1,5 @@
 import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
-
+// TODO хуйня, которую нужно нормально переписать= или выпилить нахуй.
 type QueryFilter<T> = mongoose.QueryFilter<T>;
 type UpdateQuery<T> = mongoose.UpdateQuery<T>;
 type QueryOptions<T> = mongoose.QueryOptions<T>;
