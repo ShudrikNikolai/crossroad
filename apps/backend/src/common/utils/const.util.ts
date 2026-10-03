@@ -8,3 +8,4 @@ export const API_AUTH = {
   },
 };
 export const PASSWORD_SALT_ROUNDS = 12 as const;
+export const PUBLIC_KEY = 'isPublic' as const;

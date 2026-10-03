@@ -1,5 +1,3 @@
-import { Injectable } from '@nestjs/common';
-import { MinioClient } from './minio.client';
 import {
   IStorage,
   StorageObject,
@@ -7,6 +5,8 @@ import {
   UploadPolicy,
   UploadPolicyRequest,
 } from '../storage.interface';
+import { MinioClient } from './minio.client';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MinioStorage implements IStorage {

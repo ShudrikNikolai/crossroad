@@ -1,11 +1,11 @@
-import { Module } from '@nestjs/common';
-import { AppLoggerModule } from './logger/logger.module';
-import { RedisModule } from './redis/redis.module';
 import { DbModule } from './database/db.module';
 import { EventModule } from './event/event.module';
+import { AppLoggerModule } from './logger/logger.module';
+import { ObservabilityModule } from './observability/observability.module';
+import { RedisModule } from './redis/redis.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
 import { StorageModule } from './storage/storage.module';
-// import { ObservabilityModule } from './observability/observability.module';
+import { Module } from '@nestjs/common';
 
 const infrastructureModules = [
   AppLoggerModule,
@@ -13,7 +13,7 @@ const infrastructureModules = [
   RedisModule,
   EventModule,
   StorageModule,
-  // ObservabilityModule,
+  ObservabilityModule,
   SchedulerModule,
 ];
 

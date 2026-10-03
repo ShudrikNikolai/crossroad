@@ -1,4 +1,4 @@
-import { ConfigType, registerAs } from '@nestjs/config';
+import { CONST } from './consts';
 import {
   AppSchema,
   AuthSchema,
@@ -8,7 +8,7 @@ import {
   StorageSchema,
   SwaggerSchema,
 } from './validate';
-import { CONST } from './consts';
+import { ConfigType, registerAs } from '@nestjs/config';
 
 const RedisConfig = registerAs(CONST.REDIS, () => {
   const parse = RedisSchema.parse(process.env);

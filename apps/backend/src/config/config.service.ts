@@ -1,6 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService as NestConfigService } from '@nestjs/config';
-import { CONST } from './cfg';
+import { CONST } from './core';
 import type {
   IConfigs,
   TAppConfig,
@@ -10,7 +8,9 @@ import type {
   TRedisConfig,
   TStorageConfig,
   TSwaggerConfig,
-} from './cfg';
+} from './core';
+import { Injectable } from '@nestjs/common';
+import { ConfigService as NestConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ConfigService {

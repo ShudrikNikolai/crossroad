@@ -3,26 +3,33 @@ import { SpanStatusCode, trace } from '@opentelemetry/api';
 export function Trace(name?: string): MethodDecorator {
   return (target, propertyKey, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
+    const spanName =
+      name ?? `${target.constructor.name}.${String(propertyKey)}`;
 
     descriptor.value = function (...args: unknown[]) {
       const tracer = trace.getTracer('crossroad');
 
-      const spanName =
-        name ?? `${target.constructor.name}.${String(propertyKey)}`;
-
-      return tracer.startActiveSpan(spanName, async (span) => {
+      return tracer.startActiveSpan(spanName, (span) => {
         try {
-          return await originalMethod.apply(this, args);
+          const result = originalMethod.apply(this, args);
+
+          if (result instanceof Promise) {
+            return result
+              .catch((error) => {
+                span.recordException(error);
+                span.setStatus({ code: SpanStatusCode.ERROR });
+                throw error;
+              })
+              .finally(() => span.end());
+          }
+
+          span.end();
+          return result;
         } catch (error) {
           span.recordException(error as Error);
-
-          span.setStatus({
-            code: SpanStatusCode.ERROR,
-          });
-
-          throw error;
-        } finally {
+          span.setStatus({ code: SpanStatusCode.ERROR });
           span.end();
+          throw error;
         }
       });
     };
@@ -30,20 +37,3 @@ export function Trace(name?: string): MethodDecorator {
     return descriptor;
   };
 }
-/**
- * TODO
- @Trace('story.generate')
- generate()
-
- @Trace('story.publish')
- publish()
-
- @Trace('game.start')
- startGame()
-
- @Trace('game.process-choice')
- processChoice()
-
- @Trace('llm.generate-story')
- generateStory()
- */

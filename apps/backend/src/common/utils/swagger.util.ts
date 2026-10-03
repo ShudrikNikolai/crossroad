@@ -1,9 +1,9 @@
+import { ConfigService } from '@/config';
+import { LoggerService } from '@/infra/logger/logger.service';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { LoggerService } from '@/infra/logger/logger.service';
-import { ConfigService } from '@/config';
-import { cleanupOpenApiDoc } from 'nestjs-zod';
 import fs from 'fs';
+import { cleanupOpenApiDoc } from 'nestjs-zod';
 
 export const setupSwagger = (
   app: INestApplication,

@@ -1,7 +1,7 @@
+import { DbService } from './db.service';
+import { ConfigService } from '@/config';
 import { Global, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigService } from '@/config';
-import { DbService } from './db.service';
 import { PinoLogger } from 'nestjs-pino';
 
 @Global()

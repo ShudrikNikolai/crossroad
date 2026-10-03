@@ -1,41 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { metrics } from '@opentelemetry/api';
-// TODO
+
 @Injectable()
 export class MetricsService {
   private readonly meter = metrics.getMeter('crossroad');
 
-  private readonly storyGeneratedCounter = this.meter.createCounter(
-    'crossroad.story.generated',
-    {
-      description: 'Number of generated stories',
-    },
-  );
-
-  private readonly llmRequestDuration = this.meter.createHistogram(
-    'crossroad.llm.request.duration',
-    {
-      description: 'LLM request duration',
-      unit: 'ms',
-    },
-  );
-
   private readonly requestTimeoutCounter = this.meter.createCounter(
     'crossroad.http.request.timeout',
-    {
-      description: 'Number of HTTP requests terminated by timeout',
-    },
+    { description: 'Number of HTTP requests terminated by timeout' },
   );
 
-  storyGenerated(): void {
-    this.storyGeneratedCounter.add(1);
+  private readonly playthroughCompletedCounter = this.meter.createCounter(
+    'crossroad.game.playthrough.completed',
+    { description: 'Number of completed story playthroughs' },
+  );
+
+  private readonly mediaUploadConfirmedCounter = this.meter.createCounter(
+    'crossroad.media.upload.confirmed',
+    { description: 'Number of confirmed media uploads' },
+  );
+
+  private readonly userRegisteredCounter = this.meter.createCounter(
+    'crossroad.user.registered',
+    { description: 'Number of completed user registrations' },
+  );
+
+  userRegistered(): void {
+    this.userRegisteredCounter.add(1);
   }
 
-  recordLlmRequestDuration(duration: number): void {
-    this.llmRequestDuration.record(duration);
+  requestTimeout(route?: string): void {
+    this.requestTimeoutCounter.add(1, route ? { route } : undefined);
   }
 
-  requestTimeout(): void {
-    this.requestTimeoutCounter.add(1);
+  playthroughCompleted(storyId: string): void {
+    this.playthroughCompletedCounter.add(1, { storyId });
+  }
+
+  mediaUploadConfirmed(purpose: string): void {
+    this.mediaUploadConfirmedCounter.add(1, { purpose });
   }
 }

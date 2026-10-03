@@ -1,4 +1,6 @@
+import { API_ERROR } from '../utils';
 import { ConfigService } from '@/config/config.service';
+import { IApiResponse, ValidationDetail } from '@crossroad/types';
 import {
   ArgumentsHost,
   Catch,
@@ -8,8 +10,6 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { PinoLogger } from 'nestjs-pino';
-import { API_ERROR } from '../utils';
-import { IApiResponse, ValidationDetail } from '@crossroad/types';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {

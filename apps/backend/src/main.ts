@@ -1,8 +1,4 @@
-import './infrastructure/observability/telemetry';
-
-import { NestFactory } from '@nestjs/core';
 // import tls from 'node:tls';
-
 // const originalConnect = tls.connect;
 // tls.connect = function (...args: any[]) {
 //   console.log('tls.connect called -', JSON.stringify(args[0] ?? args));
@@ -10,12 +6,14 @@ import { NestFactory } from '@nestjs/core';
 //   return originalConnect.apply(this, args as any);
 // };
 import { AppModule } from './app.module';
-import { LoggerService } from './infrastructure/logger/logger.service';
-import { VersioningType } from '@nestjs/common';
+import { setupSwagger } from './common';
 import { ConfigService } from './config';
+import { LoggerService } from './infrastructure/logger/logger.service';
+import './infrastructure/observability/telemetry';
+import { VersioningType } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { json, urlencoded } from 'express';
-import { setupSwagger } from './common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

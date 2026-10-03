@@ -1,6 +1,6 @@
+import { EventMap, EventName } from './events';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { EventMap, EventName } from './events';
 
 @Injectable()
 export class EventService {

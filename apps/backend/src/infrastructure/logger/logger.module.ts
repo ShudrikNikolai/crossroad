@@ -1,8 +1,8 @@
-import { Global, Module } from '@nestjs/common';
-import { LoggerModule as LoggerPinoModule } from 'nestjs-pino';
 import { LoggerService } from './logger.service';
-import { IncomingMessage } from 'http';
 import { ConfigService } from '@/config';
+import { Global, Module } from '@nestjs/common';
+import { IncomingMessage } from 'http';
+import { LoggerModule as LoggerPinoModule } from 'nestjs-pino';
 
 @Global()
 @Module({

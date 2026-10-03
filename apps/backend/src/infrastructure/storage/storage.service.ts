@@ -1,10 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
 import { STORAGE } from './storage.const';
 import type {
   IStorage,
   StorageUpload,
   UploadPolicyRequest,
 } from './storage.interface';
+import { Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class StorageService {
