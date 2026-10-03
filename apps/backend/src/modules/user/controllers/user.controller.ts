@@ -1,10 +1,3 @@
-import { Body, Controller, Patch } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
 import { UserService } from '../core/user.service';
 import {
   RespOkDto,
@@ -12,6 +5,13 @@ import {
   UpdateUserPhoneNumberDto,
 } from '../dtos';
 import { CurrentUser } from '@/common';
+import { Body, Controller, Patch } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('users')
 @ApiBearerAuth('access-token')

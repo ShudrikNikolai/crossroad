@@ -1,30 +1,9 @@
+import { MeDto, PublicProfileDto } from '../dtos';
+import { ProfileDocument, ProfileModel } from './profile.model';
+import { BaseRepository } from '@/common';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ProfileDocument, ProfileModel } from './profile.model';
 import { Model } from 'mongoose';
-import { BaseRepository } from '@/common';
-
-type TPublicProfileSchema = {
-  id: string;
-  username: string;
-  displayName?: string;
-  bio?: string;
-  avatarKey?: string;
-  avatarUrl?: string;
-  languages: string[];
-  socialLinks?: {
-    twitter?: string;
-    github?: string;
-    linkedin?: string;
-    telegram?: string;
-  };
-  createdAt: Date | string;
-};
-type TPrivateProfileSchema = TPublicProfileSchema & {
-  userId: string;
-  isPublic: boolean;
-  updatedAt: string;
-};
 
 @Injectable()
 export class ProfileRepository extends BaseRepository<ProfileDocument> {
@@ -35,32 +14,29 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
     super(model);
   }
 
-  async findByUserId(uId: string): Promise<ProfileDocument | null> {
-    const userId = this.toObjectId(uId);
+  async findByUserId(userId: string): Promise<ProfileDocument | null> {
     return this.findOne({ userId });
   }
 
-  async createProfile(uId: string, username: string): Promise<void> {
-    const userId = this.toObjectId(uId);
+  async createProfile(userId: string, username: string): Promise<void> {
     await this.createDocument({
-      userId,
+      userId: userId as any,
       username,
     });
   }
 
-  async findPublicProfile(_id: string): Promise<ProfileDocument | null> {
+  async findPublicProfile(id: string): Promise<ProfileDocument | null> {
     return this.findOne({
-      _id,
+      id,
       isPublic: true,
     });
   }
 
   async updateByUserId(
-    uId: string,
-    data: Omit<Partial<ProfileDocument>, '_id'>,
+    userId: string,
+    data: Partial<ProfileDocument>,
   ): Promise<ProfileDocument | null> {
-    const userId = this.toObjectId(uId);
-    return this.model.findOneAndUpdate(
+    return this.updateOne(
       {
         userId,
       },
@@ -70,24 +46,27 @@ export class ProfileRepository extends BaseRepository<ProfileDocument> {
     );
   }
 
-  toProfilePublic(data: ProfileDocument): TPublicProfileSchema {
+  toProfilePublic(data: ProfileDocument): PublicProfileDto {
     return {
-      id: data._id.toString(),
+      id: `${data._id || data.id}`,
       username: data.username,
       displayName: data.displayName,
       bio: data.bio,
-      avatarKey: data.avatarKey,
       avatarUrl: data.avatarUrl,
       languages: data.languages ?? ['ru'],
       socialLinks: data.socialLinks,
-      createdAt: data.createdAt.toISOString(),
     };
   }
 
-  toProfilePrivate(data: ProfileDocument): TPrivateProfileSchema {
+  toProfilePrivate(data: ProfileDocument): MeDto {
     return {
-      ...this.toProfilePublic(data),
-      userId: data.userId?.toString(),
+      id: data.id,
+      username: data.username,
+      displayName: data.displayName,
+      bio: data.bio,
+      avatarUrl: data.avatarUrl,
+      languages: data.languages ?? ['ru'],
+      socialLinks: data.socialLinks,
       isPublic: data.isPublic,
       updatedAt: data.updatedAt.toISOString(),
     };

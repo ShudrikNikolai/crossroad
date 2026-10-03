@@ -1,3 +1,6 @@
+import { RespOkDto, SecurityUpdatePasswordDto } from '../dtos';
+import { SecurityService } from '../security/security.service';
+import { CurrentUser } from '@/common';
 import { Body, Controller, Patch } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -5,9 +8,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { SecurityService } from '../security/security.service';
-import { RespOkDto, SecurityUpdatePasswordDto } from '../dtos';
-import { CurrentUser } from '@/common';
 
 @ApiTags('security')
 @ApiBearerAuth('access-token')

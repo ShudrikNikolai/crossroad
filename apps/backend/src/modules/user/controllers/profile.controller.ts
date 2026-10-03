@@ -1,18 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { MeDto, PublicProfileDto, UpdateProfileDto } from '../dtos';
+import { ProfileService } from '../profile/profile.service';
+import { CurrentUser } from '@/common';
+import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { ProfileService } from '../profile/profile.service';
-import {
-  MeDto,
-  PublicProfileDto,
-  UpdateProfileDto,
-  UploadAvatarDto,
-} from '../dtos';
-import { CurrentUser } from '@/common';
 
 @ApiTags('profile')
 @ApiBearerAuth('access-token')
@@ -36,16 +31,6 @@ export class ProfileController {
   ) {
     return this.profileService.updateMe(userId, data);
   }
-
-  // @Post('me/avatar') TODO
-  // @ApiOperation({ summary: 'Upload profile avatar' })
-  // @ApiOkResponse({ type: MeDto })
-  // async uploadAvatar(
-  //   @CurrentUser('id') userId: string,
-  //   @Body() data: UploadAvatarDto,
-  // ) {
-  //   return this.profileService.uploadAvatar(userId, data);
-  // }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get public profile by user id' })

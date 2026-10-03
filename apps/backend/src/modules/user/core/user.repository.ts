@@ -1,8 +1,8 @@
+import { UserDocument, UserModel } from './user.model';
+import { BaseRepository } from '@/common';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserDocument, UserModel } from './user.model';
 import { Model } from 'mongoose';
-import { BaseRepository } from '@/common';
 
 @Injectable()
 export class UserRepository extends BaseRepository<UserDocument> {
@@ -14,10 +14,8 @@ export class UserRepository extends BaseRepository<UserDocument> {
   }
 
   async findByEmail(email: string): Promise<UserDocument | null> {
-    return this.model
-      .findOne({
-        email: email.toLowerCase(),
-      })
-      .exec();
+    return this.findOne({
+      email: email.toLowerCase(),
+    });
   }
 }

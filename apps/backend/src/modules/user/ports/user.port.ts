@@ -1,5 +1,5 @@
-import type { TCreateUserSchema } from '@crossroad/schemas';
 import type { IUserPublic } from '../dtos';
+import type { TCreateUserSchema } from '@crossroad/schemas';
 
 export interface UserAuthView extends IUserPublic {}
 

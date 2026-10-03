@@ -1,9 +1,11 @@
-import { MongooseModule } from '@nestjs/mongoose';
 import {
   ProfileController,
   SecurityController,
   UserController,
 } from './controllers';
+import { UserModel, UserRepository, UserSchema, UserService } from './core';
+import { UserFacade } from './facades/user.facade';
+import { USER_PORT } from './ports/user.port';
 import {
   ProfileModel,
   ProfileRepository,
@@ -16,9 +18,8 @@ import {
   SecuritySchema,
   SecurityService,
 } from './security';
-import { UserModel, UserRepository, UserSchema, UserService } from './core';
 import { Module } from '@nestjs/common';
-import { USER_PORT } from './ports/user.port';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -47,7 +48,7 @@ import { USER_PORT } from './ports/user.port';
     SecurityRepository,
     {
       provide: USER_PORT,
-      useExisting: UserService,
+      useExisting: UserFacade,
     },
   ],
 

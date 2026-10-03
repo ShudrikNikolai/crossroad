@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
 import { StatisticDocument, StatisticModel } from './statistic.model';
 import { BaseRepository } from '@/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class StatisticRepository extends BaseRepository<StatisticDocument> {
@@ -13,11 +13,7 @@ export class StatisticRepository extends BaseRepository<StatisticDocument> {
     super(model);
   }
 
-  async createStat(type: string, uId: string): Promise<void> {
-    const userId = this.toObjectId(uId);
-    await this.createDocument({
-      type,
-      userId,
-    });
+  async createStat(type: string, uId: string) {
+    await this.createDocument({ type, userId: uId as any });
   }
 }

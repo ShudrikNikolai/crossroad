@@ -1,7 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SecurityRepository } from './security.repository';
 import { bcryptCompare, bcryptHash } from '@/common';
 import { TSecurityUpdatePasswordSchema } from '@crossroad/schemas';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
