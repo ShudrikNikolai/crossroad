@@ -23,7 +23,7 @@ crossroad/
 ## Быстрый старт
 
 ```bash
-git clone <repo>
+git clone https://github.com/ShudrikNikolai/crossroad.git
 cd crossroad
 task install        # pnpm install по всему монорепо
 task up             # поднять всё: инфраструктуру + backend + frontend + nginx
