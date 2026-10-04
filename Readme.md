@@ -22,8 +22,6 @@ crossroad/
 
 ## Быстрый старт
 
-Требуется: Docker, Node.js LTS (`^22 || ^24` — **не** 25, часть тулинга нечётные версии не поддерживает), pnpm, [go-task](https://taskfile.dev/).
-
 ```bash
 git clone <repo>
 cd crossroad
