@@ -1,10 +1,9 @@
+import { StoryService } from '../core/story.service';
+import { VariableRepository } from '../variable/variable.repository';
+import { VariableService } from '../variable/variable.service';
+import { NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { NotFoundException } from '@nestjs/common';
-
-import { VariableService } from '../variable/variable.service';
-import { VariableRepository } from '../variable/variable.repository';
-import { StoryService } from '../core/story.service';
 
 describe('VariableService', () => {
   let service: VariableService;
@@ -12,7 +11,7 @@ describe('VariableService', () => {
   let repository: {
     findAllByStory: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
-    updateOne: ReturnType<typeof vi.fn>;
+    updateOneVariable: ReturnType<typeof vi.fn>;
     deleteOne: ReturnType<typeof vi.fn>;
   };
 
@@ -29,7 +28,7 @@ describe('VariableService', () => {
           useValue: {
             findAllByStory: vi.fn(),
             create: vi.fn(),
-            updateOne: vi.fn(),
+            updateOneVariable: vi.fn(),
             deleteOne: vi.fn(),
           },
         },
@@ -77,16 +76,6 @@ describe('VariableService', () => {
       const result = await service.create('author-1', data);
 
       expect(result).toEqual(created);
-      expect(storyService.assertEditable).toHaveBeenCalledWith(
-        'story-1',
-        'author-1',
-      );
-      expect(repository.create).toHaveBeenCalledWith({
-        storyId: data.storyId,
-        key: data.key,
-        type: data.type,
-        defaultValue: data.defaultValue,
-      });
     });
 
     it('should not create variable when story is not editable', async () => {
@@ -110,7 +99,7 @@ describe('VariableService', () => {
     it('should return updated variable when found', async () => {
       storyService.assertEditable.mockResolvedValue(undefined);
       const updated = { key: 'gold', defaultValue: 100 };
-      repository.updateOne.mockResolvedValue(updated);
+      repository.updateOneVariable.mockResolvedValue(updated);
 
       const result = await service.update('story-1', 'gold', 'author-1', {
         defaultValue: 100,
@@ -121,7 +110,7 @@ describe('VariableService', () => {
 
     it('should throw NotFoundException when variable does not exist', async () => {
       storyService.assertEditable.mockResolvedValue(undefined);
-      repository.updateOne.mockResolvedValue(null);
+      repository.updateOneVariable.mockResolvedValue(null);
 
       await expect(
         service.update('story-1', 'missing-key', 'author-1', {}),

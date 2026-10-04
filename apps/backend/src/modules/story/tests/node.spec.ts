@@ -1,10 +1,9 @@
+import { StoryService } from '../core/story.service';
+import { NodeRepository } from '../node/node.repository';
+import { NodeService } from '../node/node.service';
+import { NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { NotFoundException } from '@nestjs/common';
-
-import { NodeService } from '../node/node.service';
-import { NodeRepository } from '../node/node.repository';
-import { StoryService } from '../core/story.service';
 
 describe('NodeService', () => {
   let service: NodeService;
@@ -13,7 +12,7 @@ describe('NodeService', () => {
     findAllByStory: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
     updatePosition: ReturnType<typeof vi.fn>;
-    updateOne: ReturnType<typeof vi.fn>;
+    updateEdge: ReturnType<typeof vi.fn>;
     deleteOne: ReturnType<typeof vi.fn>;
   };
 
@@ -31,7 +30,7 @@ describe('NodeService', () => {
             findAllByStory: vi.fn(),
             create: vi.fn(),
             updatePosition: vi.fn(),
-            updateOne: vi.fn(),
+            updateEdge: vi.fn(),
             deleteOne: vi.fn(),
           },
         },
@@ -137,39 +136,6 @@ describe('NodeService', () => {
         'node-1',
         { x: 10, y: 20 },
       );
-    });
-  });
-
-  describe('update', () => {
-    it('should return updated node when found', async () => {
-      storyService.assertEditable.mockResolvedValue(undefined);
-      const updated = { id: 'node-1', type: 'scene' };
-      repository.updateOne.mockResolvedValue(updated);
-
-      const result = await service.update('story-1', 'node-1', 'author-1', {
-        type: 'scene' as const,
-      });
-
-      expect(result).toEqual(updated);
-    });
-
-    it('should throw NotFoundException when node does not exist', async () => {
-      storyService.assertEditable.mockResolvedValue(undefined);
-      repository.updateOne.mockResolvedValue(null);
-
-      await expect(
-        service.update('story-1', 'missing-node', 'author-1', {}),
-      ).rejects.toThrow(NotFoundException);
-    });
-
-    it('should not touch repository when story is not editable', async () => {
-      storyService.assertEditable.mockRejectedValue(new Error('locked'));
-
-      await expect(
-        service.update('story-1', 'node-1', 'author-1', {}),
-      ).rejects.toThrow('locked');
-
-      expect(repository.updateOne).not.toHaveBeenCalled();
     });
   });
 

@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Crossroad Frontend
 
-## Getting Started
+Frontend приложения **Crossroad** — веб-интерфейс для авторизации пользователей, управления профилем, создания и публикации историй и прохождения интерактивных игр.
 
-First, run the development server:
+Frontend взаимодействует с backend API через HTTP и использует прямую загрузку медиафайлов в MinIO.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## Стек
+
+Основные технологии:
+
+* **Next.js**
+* **React**
+* **TypeScript**
+* **HeroUI** — UI-компоненты
+* **React Flow** (`@xyflow/react`) — визуальный редактор графа истории
+* **Axios** — HTTP-клиент
+* **Zod / `@crossroad/schemas`** — общие схемы и типы
+* **MinIO / S3** — хранение медиафайлов
+
+Backend API:
+
+```text
+http://localhost:3001/api/v1
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Локальное хранилище MinIO:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:9000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# Структура проекта
 
-To learn more about Next.js, take a look at the following resources:
+Основная бизнес-логика организована по feature-based структуре:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+features/
+├── auth/
+│   ├── api/
+│   ├── components/
+│   ├── hooks/
+│   └── types/
+│
+├── game/
+│   ├── api/
+│   ├── components/
+│   │   ├── list/
+│   │   ├── new/
+│   │   └── play/
+│   ├── hooks/
+│   ├── lib/
+│   │   └── saves/
+│   └── types/
+│
+├── media/
+│   ├── api/
+│   ├── hooks/
+│   ├── types/
+│   └── utils/
+│
+├── stories/
+│   ├── api/
+│   ├── components/
+│   ├── hooks/
+│   ├── lib/
+│   └── types/
+│
+└── user/
+    ├── api/
+    ├── components/
+    └── types/
+```

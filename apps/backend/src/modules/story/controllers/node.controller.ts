@@ -43,7 +43,7 @@ export class NodeController {
     @CurrentUser('id') authorId: string,
     @Body() data: CreateNodeDto,
   ) {
-    console.log('AAAAAAAAAAAA >>>', {authorId, storyId, data})
+    console.log('AAAAAAAAAAAA >>>', { authorId, storyId, data });
     return this.nodeService.create(authorId, { ...data, storyId });
   }
 

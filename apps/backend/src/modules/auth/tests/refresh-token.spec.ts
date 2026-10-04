@@ -1,5 +1,7 @@
+import { RefreshTokenRepository } from '../refresh-token/refresh-token.repository';
+import { RefreshTokenService } from '../refresh-token/refresh-token.service';
+import { bcryptCompare, bcryptHash } from '@/common';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Types } from 'mongoose';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/common', async (importOriginal) => {
@@ -7,15 +9,12 @@ vi.mock('@/common', async (importOriginal) => {
   return { ...actual, bcryptHash: vi.fn(), bcryptCompare: vi.fn() };
 });
 
-import { bcryptCompare, bcryptHash } from '@/common';
-import { RefreshTokenService } from '../refresh-token/refresh-token.service';
-import { RefreshTokenRepository } from '../refresh-token/refresh-token.repository';
-
 describe('RefreshTokenService', () => {
   let service: RefreshTokenService;
 
   let repository: {
-    create: ReturnType<typeof vi.fn>;
+    createDocument: ReturnType<typeof vi.fn>;
+    toPublic: ReturnType<typeof vi.fn>;
     findByJti: ReturnType<typeof vi.fn>;
     revoke: ReturnType<typeof vi.fn>;
     revokeByUserId: ReturnType<typeof vi.fn>;
@@ -31,7 +30,8 @@ describe('RefreshTokenService', () => {
         {
           provide: RefreshTokenRepository,
           useValue: {
-            create: vi.fn(),
+            createDocument: vi.fn(),
+            toPublic: vi.fn(),
             findByJti: vi.fn(),
             revoke: vi.fn(),
             revokeByUserId: vi.fn(),
@@ -45,14 +45,18 @@ describe('RefreshTokenService', () => {
     repository = module.get(RefreshTokenRepository);
 
     vi.clearAllMocks();
+    repository.toPublic.mockImplementation((doc: any) => Promise.resolve(doc));
   });
 
   describe('create', () => {
-    it('should store a hash of the token, not the token itself', async () => {
+    it('should store a hash of the token (not the token itself) and return the public shape', async () => {
       const expiresAt = new Date('2026-10-05T12:00:00Z');
-      const doc = { jti: 'jti-1' };
+      const rawDoc = { jti: 'jti-1' };
+      const publicDoc = { id: 'rt-1', jti: 'jti-1' };
+
       vi.mocked(bcryptHash).mockResolvedValue('hashed-token');
-      repository.create.mockResolvedValue(doc);
+      repository.createDocument.mockResolvedValue(rawDoc);
+      repository.toPublic.mockResolvedValue(publicDoc);
 
       const result = await service.create(
         userId,
@@ -61,18 +65,19 @@ describe('RefreshTokenService', () => {
         expiresAt,
       );
 
-      expect(result).toBe(doc);
+      expect(result).toEqual(publicDoc);
       expect(bcryptHash).toHaveBeenCalledWith('raw-token');
+      expect(repository.toPublic).toHaveBeenCalledWith(rawDoc);
 
-      const saved = repository.create.mock.calls[0][0];
-      expect(saved.userId).toBeInstanceOf(Types.ObjectId);
+      const saved = repository.createDocument.mock.calls[0][0];
       expect(saved.userId.toString()).toBe(userId);
       expect(saved).toMatchObject({
         jti: 'jti-1',
         tokenHash: 'hashed-token',
         expiresAt,
-        revokedAt: null,
       });
+
+      expect(saved).not.toHaveProperty('revokedAt');
       expect(JSON.stringify(saved)).not.toContain('raw-token');
     });
   });
@@ -97,38 +102,54 @@ describe('RefreshTokenService', () => {
 
   describe('verify', () => {
     it('should return false without comparing when the token is no longer valid', async () => {
-      const doc = {
-        isValid: vi.fn().mockReturnValue(false),
+      const refreshToken = {
+        revokedAt: new Date(),
+        expiresAt: new Date(),
         tokenHash: 'stored-hash',
       };
 
-      const result = await service.verify('raw-token', doc as never);
+      const result = await service.verify('raw-token', refreshToken);
 
       expect(result).toBe(false);
       expect(bcryptCompare).not.toHaveBeenCalled();
     });
 
-    it('should return true when token is valid and hash matches', async () => {
-      const doc = {
-        isValid: vi.fn().mockReturnValue(true),
+    it('should return true when not revoked, not expired, and hash matches', async () => {
+      const refreshToken = {
+        revokedAt: null,
+        expiresAt: new Date(Date.now() + 60_000),
         tokenHash: 'stored-hash',
       };
       vi.mocked(bcryptCompare).mockResolvedValue(true);
 
-      const result = await service.verify('raw-token', doc as never);
+      const result = await service.verify('raw-token', refreshToken);
 
       expect(result).toBe(true);
       expect(bcryptCompare).toHaveBeenCalledWith('raw-token', 'stored-hash');
     });
 
-    it('should return false when hash does not match', async () => {
-      const doc = {
-        isValid: vi.fn().mockReturnValue(true),
+    it('should return false when the hash does not match', async () => {
+      const refreshToken = {
+        revokedAt: null,
+        expiresAt: new Date(Date.now() + 60_000),
         tokenHash: 'stored-hash',
       };
       vi.mocked(bcryptCompare).mockResolvedValue(false);
 
-      expect(await service.verify('other-token', doc as never)).toBe(false);
+      expect(await service.verify('other-token', refreshToken)).toBe(false);
+    });
+
+    it('should return false without comparing when the token has expired', async () => {
+      const refreshToken = {
+        revokedAt: null,
+        expiresAt: new Date(Date.now() - 1000),
+        tokenHash: 'stored-hash',
+      };
+
+      const result = await service.verify('raw-token', refreshToken);
+
+      expect(result).toBe(false);
+      expect(bcryptCompare).not.toHaveBeenCalled();
     });
   });
 

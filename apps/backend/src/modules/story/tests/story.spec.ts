@@ -1,13 +1,12 @@
-import { Test, type TestingModule } from '@nestjs/testing';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { StoryRepository } from '../core/story.repository';
+import { StoryService } from '../core/story.service';
 import {
   ConflictException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-
-import { StoryService } from '../core/story.service';
-import { StoryRepository } from '../core/story.repository';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('StoryService', () => {
   let service: StoryService;
@@ -18,6 +17,7 @@ describe('StoryService', () => {
     create: ReturnType<typeof vi.fn>;
     updateById: ReturnType<typeof vi.fn>;
     setStatus: ReturnType<typeof vi.fn>;
+    toPublic: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(async () => {
@@ -32,6 +32,7 @@ describe('StoryService', () => {
             create: vi.fn(),
             updateById: vi.fn(),
             setStatus: vi.fn(),
+            toPublic: vi.fn(),
           },
         },
       ],
@@ -41,17 +42,22 @@ describe('StoryService', () => {
     repository = module.get(StoryRepository);
 
     vi.clearAllMocks();
+    repository.toPublic.mockImplementation((doc: any) => Promise.resolve(doc));
   });
 
   describe('findById', () => {
-    it('should return story when found', async () => {
-      const story = { _id: 'story-1', title: 'Test' };
-      repository.findById.mockResolvedValue(story);
+    it('should return the public shape via repository.toPublic', async () => {
+      const rawStory = { _id: 'story-1', title: 'Test' };
+      const publicStory = { id: 'story-1', title: 'Test' };
+
+      repository.findById.mockResolvedValue(rawStory);
+      repository.toPublic.mockResolvedValue(publicStory);
 
       const result = await service.findById('story-1');
 
-      expect(result).toEqual(story);
+      expect(result).toEqual(publicStory);
       expect(repository.findById).toHaveBeenCalledWith('story-1');
+      expect(repository.toPublic).toHaveBeenCalledWith(rawStory);
     });
 
     it('should throw NotFoundException when story does not exist', async () => {
@@ -60,25 +66,27 @@ describe('StoryService', () => {
       await expect(service.findById('story-1')).rejects.toThrow(
         NotFoundException,
       );
+      expect(repository.toPublic).not.toHaveBeenCalled();
     });
   });
 
-  describe('findByAuthor', () => {
-    it('should delegate to repository', async () => {
-      const stories = [{ _id: 'story-1' }];
-      repository.findByAuthor.mockResolvedValue(stories);
+  describe('getStories', () => {
+    it('should delegate to findByAuthor', async () => {
+      const findByAuthorSpy = vi
+        .spyOn(service, 'findByAuthor')
+        .mockResolvedValue([{ id: 'story-1' } as any]);
 
-      const result = await service.findByAuthor('author-1');
+      const result = await service.getStories('author-1');
 
-      expect(result).toEqual(stories);
-      expect(repository.findByAuthor).toHaveBeenCalledWith('author-1');
+      expect(result).toEqual([{ id: 'story-1' }]);
+      expect(findByAuthorSpy).toHaveBeenCalledWith('author-1');
     });
   });
 
   describe('create', () => {
-    it('should create story via repository', async () => {
+    it('should create story via repository without an extra toPublic call', async () => {
       const data = { title: 'New story', description: 'desc' };
-      const created = { _id: 'story-1', ...data, authorId: 'author-1' };
+      const created = { id: 'story-1', ...data, authorId: 'author-1' };
       repository.create.mockResolvedValue(created);
 
       const result = await service.create('author-1', data);
@@ -89,11 +97,13 @@ describe('StoryService', () => {
         description: data.description,
         authorId: 'author-1',
       });
+
+      expect(repository.toPublic).not.toHaveBeenCalled();
     });
   });
 
   describe('assertEditable', () => {
-    it('should return story when owner and status is draft', async () => {
+    it('should return the story when owner and status is draft', async () => {
       const story = {
         authorId: { toString: () => 'author-1' },
         status: 'draft',
@@ -139,7 +149,7 @@ describe('StoryService', () => {
   });
 
   describe('assertOwnership', () => {
-    it('should return story regardless of status, when owner matches', async () => {
+    it('should return the story regardless of status, when owner matches', async () => {
       const story = {
         authorId: { toString: () => 'author-1' },
         status: 'published',
@@ -165,25 +175,31 @@ describe('StoryService', () => {
   });
 
   describe('update', () => {
-    it('should call assertEditable then update via repository', async () => {
+    it('should check editability, update, then return the public shape', async () => {
       const story = {
         authorId: { toString: () => 'author-1' },
         status: 'draft',
       };
+      const updatedRaw = { ...story, title: 'Updated' };
+      const updatedPublic = { id: 'story-1', title: 'Updated' };
+
       repository.findById.mockResolvedValue(story);
-      repository.updateById.mockResolvedValue({ ...story, title: 'Updated' });
+      repository.updateById.mockResolvedValue(updatedRaw);
+      repository.toPublic.mockImplementation((doc: any) =>
+        Promise.resolve(doc === updatedRaw ? updatedPublic : doc),
+      );
 
       const result = await service.update('story-1', 'author-1', {
         title: 'Updated',
       });
 
-      expect(result).toEqual({ ...story, title: 'Updated' });
+      expect(result).toEqual(updatedPublic);
       expect(repository.updateById).toHaveBeenCalledWith('story-1', {
         title: 'Updated',
       });
     });
 
-    it('should propagate assertEditable rejection without calling repository.updateById', async () => {
+    it('should not call repository.updateById when the story is not editable', async () => {
       const story = {
         authorId: { toString: () => 'author-1' },
         status: 'published',
@@ -200,7 +216,7 @@ describe('StoryService', () => {
 
   describe('setStatus', () => {
     it('should delegate to repository', async () => {
-      const updated = { _id: 'story-1', status: 'published' };
+      const updated = { id: 'story-1', status: 'published' };
       repository.setStatus.mockResolvedValue(updated);
 
       const result = await service.setStatus('story-1', 'published');

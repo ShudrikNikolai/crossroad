@@ -1,18 +1,18 @@
-import { Test, type TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { AuthService } from '../core/auth.service';
+import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { ConfigService } from '@/config';
 import { EventService } from '@/infrastructure/event/event.service';
-import { AuthService } from '../auth/auth.service';
-import { UserAuthAdapter } from '../adapters/user.adapter';
-import { RefreshTokenService } from '../refresh-token/refresh-token.service';
+import { USER_PORT } from '@/modules/user/ports/user.port';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { PinoLogger } from 'nestjs-pino';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('AuthService', () => {
   let service: AuthService;
 
-  let userAdapter: {
+  let userPort: {
     findByEmail: ReturnType<typeof vi.fn>;
     findById: ReturnType<typeof vi.fn>;
     verifyPassword: ReturnType<typeof vi.fn>;
@@ -29,13 +29,14 @@ describe('AuthService', () => {
   };
 
   const user = { id: 'user-1', email: 'john@example.com' };
+  const logger = { setContext: vi.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
         {
-          provide: UserAuthAdapter,
+          provide: USER_PORT,
           useValue: {
             findByEmail: vi.fn(),
             findById: vi.fn(),
@@ -45,15 +46,9 @@ describe('AuthService', () => {
         },
         {
           provide: RefreshTokenService,
-          useValue: {
-            create: vi.fn(),
-            revoke: vi.fn(),
-          },
+          useValue: { create: vi.fn(), revoke: vi.fn() },
         },
-        {
-          provide: JwtService,
-          useValue: { signAsync: vi.fn() },
-        },
+        { provide: JwtService, useValue: { signAsync: vi.fn() } },
         {
           provide: ConfigService,
           useValue: {
@@ -61,25 +56,22 @@ describe('AuthService', () => {
               jwtSecret: 'access-secret',
               jwtRefreshSecret: 'refresh-secret',
               jwtAccessTtl: 900,
-              jwtRefreshTtl: 604800, // 7 дней
+              jwtRefreshTtl: 604800,
             },
           },
         },
-        {
-          provide: EventService,
-          useValue: { emitAsync: vi.fn() },
-        },
+        { provide: PinoLogger, useValue: logger },
+        { provide: EventService, useValue: { emitAsync: vi.fn() } },
       ],
     }).compile();
 
     service = module.get(AuthService);
-    userAdapter = module.get(UserAuthAdapter);
+    userPort = module.get(USER_PORT);
     refreshTokenService = module.get(RefreshTokenService);
     jwtService = module.get(JwtService);
 
     vi.clearAllMocks();
 
-    // порядок вызовов signAsync внутри Promise.all не должен влиять на тест
     jwtService.signAsync.mockImplementation(
       async (payload: { type: string }) =>
         payload.type === 'access' ? 'access-token' : 'refresh-token',
@@ -94,8 +86,8 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should return tokens for valid credentials', async () => {
-      userAdapter.findByEmail.mockResolvedValue(user);
-      userAdapter.verifyPassword.mockResolvedValue(true);
+      userPort.findByEmail.mockResolvedValue(user);
+      userPort.verifyPassword.mockResolvedValue(true);
 
       const result = await service.login('john@example.com', 'password');
 
@@ -108,16 +100,16 @@ describe('AuthService', () => {
         tokenType: 'Bearer',
       });
 
-      expect(userAdapter.findByEmail).toHaveBeenCalledWith('john@example.com');
-      expect(userAdapter.verifyPassword).toHaveBeenCalledWith(
+      expect(userPort.findByEmail).toHaveBeenCalledWith('john@example.com');
+      expect(userPort.verifyPassword).toHaveBeenCalledWith(
         'user-1',
         'password',
       );
     });
 
     it('should sign access and refresh tokens with different secrets', async () => {
-      userAdapter.findByEmail.mockResolvedValue(user);
-      userAdapter.verifyPassword.mockResolvedValue(true);
+      userPort.findByEmail.mockResolvedValue(user);
+      userPort.verifyPassword.mockResolvedValue(true);
 
       const result = await service.login('john@example.com', 'password');
 
@@ -135,8 +127,8 @@ describe('AuthService', () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2026-09-28T12:00:00Z'));
 
-      userAdapter.findByEmail.mockResolvedValue(user);
-      userAdapter.verifyPassword.mockResolvedValue(true);
+      userPort.findByEmail.mockResolvedValue(user);
+      userPort.verifyPassword.mockResolvedValue(true);
 
       const result = await service.login('john@example.com', 'password');
 
@@ -149,8 +141,8 @@ describe('AuthService', () => {
     });
 
     it('should issue a unique jti for every login', async () => {
-      userAdapter.findByEmail.mockResolvedValue(user);
-      userAdapter.verifyPassword.mockResolvedValue(true);
+      userPort.findByEmail.mockResolvedValue(user);
+      userPort.verifyPassword.mockResolvedValue(true);
 
       const first = await service.login('john@example.com', 'password');
       const second = await service.login('john@example.com', 'password');
@@ -159,19 +151,19 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException when user does not exist', async () => {
-      userAdapter.findByEmail.mockResolvedValue(null);
+      userPort.findByEmail.mockResolvedValue(null);
 
       await expect(
         service.login('nobody@example.com', 'password'),
       ).rejects.toThrow(UnauthorizedException);
 
-      expect(userAdapter.verifyPassword).not.toHaveBeenCalled();
+      expect(userPort.verifyPassword).not.toHaveBeenCalled();
       expect(jwtService.signAsync).not.toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException on wrong password and issue nothing', async () => {
-      userAdapter.findByEmail.mockResolvedValue(user);
-      userAdapter.verifyPassword.mockResolvedValue(false);
+      userPort.findByEmail.mockResolvedValue(user);
+      userPort.verifyPassword.mockResolvedValue(false);
 
       await expect(service.login('john@example.com', 'wrong')).rejects.toThrow(
         UnauthorizedException,
@@ -184,7 +176,7 @@ describe('AuthService', () => {
 
   describe('register', () => {
     it('should create user with email auth method and return tokens', async () => {
-      userAdapter.createUser.mockResolvedValue(user);
+      userPort.createUser.mockResolvedValue(user);
 
       const result = await service.register({
         email: 'john@example.com',
@@ -192,7 +184,7 @@ describe('AuthService', () => {
         password: 'password',
       } as never);
 
-      expect(userAdapter.createUser).toHaveBeenCalledWith({
+      expect(userPort.createUser).toHaveBeenCalledWith({
         email: 'john@example.com',
         username: 'john',
         password: 'password',
@@ -202,8 +194,8 @@ describe('AuthService', () => {
       expect(result.refreshToken).toBe('refresh-token');
     });
 
-    it('should not forward extra fields (e.g. confirmPassword) to the adapter', async () => {
-      userAdapter.createUser.mockResolvedValue(user);
+    it('should not forward extra fields (e.g. confirmPassword) to the port', async () => {
+      userPort.createUser.mockResolvedValue(user);
 
       await service.register({
         email: 'john@example.com',
@@ -212,7 +204,7 @@ describe('AuthService', () => {
         confirmPassword: 'password',
       } as never);
 
-      expect(userAdapter.createUser).toHaveBeenCalledWith({
+      expect(userPort.createUser).toHaveBeenCalledWith({
         email: 'john@example.com',
         username: 'john',
         password: 'password',
@@ -221,7 +213,7 @@ describe('AuthService', () => {
     });
 
     it('should throw ConflictException when user already exists and issue no tokens', async () => {
-      userAdapter.createUser.mockResolvedValue(null);
+      userPort.createUser.mockResolvedValue(null);
 
       await expect(
         service.register({
@@ -238,7 +230,7 @@ describe('AuthService', () => {
 
   describe('refresh', () => {
     it('should revoke the old token before issuing a new pair', async () => {
-      userAdapter.findById.mockResolvedValue(user);
+      userPort.findById.mockResolvedValue(user);
 
       const result = await service.refresh('user-1', 'old-jti');
 
@@ -253,7 +245,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException and issue nothing when user no longer exists', async () => {
-      userAdapter.findById.mockResolvedValue(null);
+      userPort.findById.mockResolvedValue(null);
 
       await expect(service.refresh('user-1', 'old-jti')).rejects.toThrow(
         UnauthorizedException,

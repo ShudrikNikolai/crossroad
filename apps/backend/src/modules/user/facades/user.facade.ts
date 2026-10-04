@@ -65,7 +65,10 @@ export class UserFacade implements IUserAuthPort {
       this.serviceProfile.create(user.id, data.username),
     ]);
 
-    this.eventService.emit(USER_CREATED_EVENT, { userId: user.id, email: user.email });
+    this.eventService.emit(USER_CREATED_EVENT, {
+      userId: user.id,
+      email: user.email,
+    });
     this.metricsService.userRegistered();
 
     return this.getUserPublic(user);

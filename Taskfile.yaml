@@ -1,0 +1,61 @@
+version: '3'
+
+vars:
+  COMPOSE_FILE: infra/docker/docker-compose.yaml
+
+tasks:
+  up:
+    desc: Поднять всё (инфра + backend + frontend + nginx)
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} up -d --build
+
+  down:
+    desc: Остановить всё
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} down
+
+  down:volumes:
+    desc: Остановить всё и снести volumes (БД/MinIO/Prometheus)
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} down -v
+
+  infra:up:
+    desc: Поднять только инфраструктуру — для разработки вне Docker (backend/frontend руками через pnpm)
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} up -d mongo redis minio otel-collector jaeger prometheus
+
+  logs:
+    desc: 'Логи сервиса, напр.: task logs -- backend'
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} logs -f {{.CLI_ARGS}}
+
+  build:
+    desc: Пересобрать backend/frontend без кэша
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} build --no-cache backend frontend
+
+  install:
+    cmds:
+      - pnpm install
+
+  dev:
+    desc: Запуск backend+frontend локально через turbo (не в Docker)
+    cmds:
+      - pnpm turbo run dev
+
+  test:
+    cmds:
+      - pnpm turbo run test
+
+  test:e2e:
+    desc: 'e2e backend — сначала: task infra:up'
+    cmds:
+      - pnpm --filter backend test:e2e
+
+  lint:
+    cmds:
+      - pnpm turbo run lint
+
+  lint:fix:
+    cmds:
+      - pnpm turbo run lint:fix

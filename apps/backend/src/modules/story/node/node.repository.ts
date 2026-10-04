@@ -30,7 +30,6 @@ export class NodeRepository extends BaseRepository<NodeDocument> {
     return this.updateOne({ storyId, id: nodeId }, { position });
   }
 
-
   updateNode(
     storyId: string,
     nodeId: string,

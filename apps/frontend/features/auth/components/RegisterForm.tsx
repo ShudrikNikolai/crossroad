@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Button, Form, Input, Label, TextField } from '@heroui/react';
 import { useAuthStore } from '@/stores/auth.store';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { getMe } from '../api/profile';
 import { register } from '../api/auth';
 
 export function RegisterForm() {
+  const router = useRouter();
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
   const setUser = useAuthStore((state) => state.setUser);
@@ -45,11 +46,11 @@ export function RegisterForm() {
       }
       setUser(user);
 
-      router.replace('/dashboard');
+      console.log('>>>>>>>>>>', { user, tokens })
+      setIsLoading(false);
+      router.push('/dashboard');
     } catch {
       setError('Failed to create account.');
-    } finally {
-      setIsLoading(false);
     }
   }
 

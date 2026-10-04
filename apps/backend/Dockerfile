@@ -1,41 +1,24 @@
-FROM node:22-alpine AS base
-
-WORKDIR /app
-
-RUN corepack enable
-
-# --------------------
-# Dependencies
-# --------------------
-FROM base AS deps
-
-COPY package.json yarn.lock ./
-
-RUN pnpm install --frozen-lockfile
-
-# --------------------
-# Build
-# --------------------
-FROM base AS builder
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-RUN pnpm build
-
-# --------------------
-# Production
-# --------------------
-FROM node:22-alpine AS runner
+FROM node:22-bookworm-slim
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+RUN corepack enable \
+    && corepack prepare pnpm@11.25.0 --activate
+
+COPY . .
+
+RUN pnpm install --frozen-lockfile
+
+RUN pnpm exec turbo run build --filter=backend...
+
+RUN addgroup --system nodejs \
+    && adduser --system --ingroup nodejs nestjs \
+    && chown -R nestjs:nodejs /app
+
+USER nestjs
 
 EXPOSE 3001
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "apps/backend/dist/main.js"]

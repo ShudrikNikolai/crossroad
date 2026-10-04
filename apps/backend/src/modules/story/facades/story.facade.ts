@@ -21,7 +21,7 @@ export class StoryFacade implements IStoryPort {
   }
 
   async getFullGraph(storyId: string) {
-    console.log("getFullGraph >>>>>>>>>>>>>>>????")
+    console.log('getFullGraph >>>>>>>>>>>>>>>????');
     const [story, nodes, edges, variables] = await Promise.all([
       this.storyService.findById(storyId),
       this.nodeService.findAllByStory(storyId),
