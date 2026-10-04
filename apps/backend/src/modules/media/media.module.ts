@@ -1,9 +1,9 @@
+import { MediaController } from './controllers/media.controller';
+import { MediaModel, MediaRepository, MediaSchema, MediaService } from './core';
+import { MEDIA_PORT } from './ports/media.port';
+import { StoryModule } from '@/modules/story/story.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { StoryModule } from '@/modules/story/story.module';
-import { MediaModel, MediaRepository, MediaSchema, MediaService } from './core';
-import { MediaController } from './controllers/media.controller';
-import { MEDIA_PORT } from './ports/media.port';
 
 @Module({
   imports: [

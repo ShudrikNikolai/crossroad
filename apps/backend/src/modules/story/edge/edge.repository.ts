@@ -1,45 +1,37 @@
+import { EdgeDocument, EdgeModel } from './edge.model';
+import { BaseModel, BaseRepository } from '@/common';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { EdgeDocument, EdgeModel } from './edge.model';
-import { BaseModel, BaseRepository } from '@/common';
 
 @Injectable()
 export class EdgeRepository extends BaseRepository<EdgeDocument> {
   constructor(@InjectModel(EdgeModel.name) model: Model<EdgeDocument>) {
     super(model);
   }
-
   findAllByStory(sId: string) {
-    const storyId = this.toObjectId(sId);
-    return this.model.find({ storyId }).lean();
+    return this.findManyLean({ storyId: sId });
   }
 
-  findBySource(sId: string, source: string) {
-    const storyId = this.toObjectId(sId);
-    return this.model.find({ storyId, source }).lean();
+  findBySource(storyId: string, source: string) {
+    return this.findManyLean({ storyId, source });
   }
 
   create(data: Omit<EdgeModel, keyof BaseModel>) {
-    data.storyId = this.toObjectId(`${data.storyId}`);
-    return this.model.create(data);
+    return this.createDocument(data);
   }
 
   updateEdge(
-    sId: string,
+    storyId: string,
     edgeId: string,
     data: Partial<
       Pick<EdgeModel, 'source' | 'target' | 'label' | 'conditions'>
     >,
   ) {
-    const storyId = this.toObjectId(sId);
-    return this.model.findOneAndUpdate({ storyId, id: edgeId }, data, {
-      new: true,
-    });
+    return this.updateOne({ storyId, id: edgeId }, data);
   }
 
   deleteOne(sId: string, edgeId: string) {
-    const storyId = this.toObjectId(sId);
-    return this.model.deleteOne({ storyId, id: edgeId });
+    return this.hardDeleteOne({ storyId: sId, id: edgeId });
   }
 }

@@ -1,19 +1,27 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
 import { StoryService } from '../core/story.service';
-import { NodeService } from '../node/node.service';
 import { EdgeService } from '../edge/edge.service';
+import { NodeService } from '../node/node.service';
+import { IStoryPort } from '../ports/story.port';
 import { VariableService } from '../variable/variable.service';
+import { Trace } from '@/infrastructure/observability/decorators/trace.decorator';
+import { MetricsService } from '@/infrastructure/observability/metrics.service';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 @Injectable()
-export class StoryFacade {
+export class StoryFacade implements IStoryPort {
   constructor(
     private readonly storyService: StoryService,
     private readonly nodeService: NodeService,
     private readonly edgeService: EdgeService,
     private readonly variableService: VariableService,
+    private readonly metricsService: MetricsService,
   ) {}
+  getPublishedGraph(storyId: string) {
+    return this.getFullGraph(storyId);
+  }
 
   async getFullGraph(storyId: string) {
+    console.log("getFullGraph >>>>>>>>>>>>>>>????")
     const [story, nodes, edges, variables] = await Promise.all([
       this.storyService.findById(storyId),
       this.nodeService.findAllByStory(storyId),
@@ -23,6 +31,7 @@ export class StoryFacade {
     return { story, nodes, edges, variables };
   }
 
+  @Trace('StoryFacade.publish')
   async publish(storyId: string, authorId: string) {
     const story = await this.storyService.assertOwnership(storyId, authorId);
     const [nodes, edges] = await Promise.all([
@@ -32,7 +41,9 @@ export class StoryFacade {
 
     this.validateGraph(story, nodes, edges);
 
-    return this.storyService.setStatus(storyId, 'published');
+    const published = await this.storyService.setStatus(storyId, 'published');
+    this.metricsService.storyPublished();
+    return published;
   }
 
   private validateGraph(

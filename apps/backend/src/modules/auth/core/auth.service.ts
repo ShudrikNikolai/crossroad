@@ -1,36 +1,43 @@
+import { IRegisterUser } from '../dtos';
+import { Tokens } from '../interfaces';
+import { RefreshTokenService } from '../refresh-token/refresh-token.service';
+import { API_AUTH_ERROR } from '@/common';
+import { ConfigService } from '@/config';
+import { EventService } from '@/infrastructure/event/event.service';
+import {
+  type IUserAuthPort,
+  USER_PORT,
+  UserAuthView,
+} from '@/modules/user/ports/user.port';
 import {
   ConflictException,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
-import { ConfigService } from '@/config';
-import { EventService } from '@/infrastructure/event/event.service';
-import { Tokens } from '../interfaces';
-import { API_AUTH_ERROR } from '@/common';
-import { UserAuthAdapter } from '../adapters/user.adapter';
-import { RefreshTokenService } from '../refresh-token/refresh-token.service';
-import { IRegisterUser } from '../dtos';
-import { UserAuthView } from '@/modules/user/ports/user.port';
+import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userAdapter: UserAuthAdapter,
+    @Inject(USER_PORT) private readonly userService: IUserAuthPort,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly logger: PinoLogger,
     private readonly eventService: EventService,
-  ) {}
+  ) {
+    this.logger.setContext(AuthService.name);
+  }
   async login(email: string, password: string): Promise<Tokens> {
-    const user = await this.userAdapter.findByEmail(email);
-    // TODO объеденить в одну функцию, хуйня два запроса слать.
+    const user = await this.userService.findByEmail(email);
     if (!user) {
       throw new UnauthorizedException(API_AUTH_ERROR.INVALID_CREDENTIALS);
     }
 
-    const valid = await this.userAdapter.verifyPassword(user.id, password);
+    const valid = await this.userService.verifyPassword(user.id, password);
     if (!valid) {
       throw new UnauthorizedException(API_AUTH_ERROR.INVALID_CREDENTIALS);
     }
@@ -45,7 +52,7 @@ export class AuthService {
       password: rawData.password,
       authMethod: 'email' as const,
     };
-    const user: UserAuthView | null = await this.userAdapter.createUser(data);
+    const user: UserAuthView | null = await this.userService.createUser(data);
 
     if (!user) {
       throw new ConflictException(API_AUTH_ERROR.USER_ALREADY_EXISTS);
@@ -56,7 +63,7 @@ export class AuthService {
   }
 
   async refresh(userId: string, refreshTokenId: string): Promise<Tokens> {
-    const user = await this.userAdapter.findById(userId);
+    const user = await this.userService.findById(userId);
 
     if (!user) {
       throw new UnauthorizedException(API_AUTH_ERROR.USER_NOT_FOUND);

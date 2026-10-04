@@ -1,12 +1,12 @@
+import { AUTH } from '../consts';
+import { RefreshTokenPayload } from '../interfaces';
+import { RefreshTokenService } from '../refresh-token/refresh-token.service';
+import { API_AUTH_ERROR } from '@/common';
 import { ConfigService } from '@/config';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { RefreshTokenPayload } from '../interfaces';
-import { AUTH } from '../consts';
-import { API_AUTH_ERROR } from '@/common';
-import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { Request } from 'express';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(

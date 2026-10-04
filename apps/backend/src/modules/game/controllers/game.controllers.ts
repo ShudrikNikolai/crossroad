@@ -1,10 +1,3 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
 import { GameService } from '../core/game.service';
 import {
   CreateGameDto,
@@ -12,6 +5,13 @@ import {
   UpdateGameNextStepDto,
 } from '../dtos';
 import { CurrentUser } from '@/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('game')
 @ApiBearerAuth('access-token')

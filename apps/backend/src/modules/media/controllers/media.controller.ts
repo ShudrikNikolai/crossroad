@@ -1,10 +1,3 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
 import { MediaService } from '../core';
 import {
   CreateUploadUrlDto,
@@ -12,6 +5,13 @@ import {
   UploadUrlResponseDto,
 } from '../dtos';
 import { CurrentUser } from '@/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('media')
 @ApiBearerAuth('access-token')

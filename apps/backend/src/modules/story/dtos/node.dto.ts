@@ -1,10 +1,10 @@
-import { createZodDto } from 'nestjs-zod';
 import {
   CreateNodeSchema,
   NodeResponseSchema,
   PositionSchema,
   UpdateNodeSchema,
 } from '@crossroad/schemas';
+import { createZodDto } from 'nestjs-zod';
 
 export class CreateNodeDto extends createZodDto(CreateNodeSchema) {}
 export class UpdateNodeDto extends createZodDto(UpdateNodeSchema) {}

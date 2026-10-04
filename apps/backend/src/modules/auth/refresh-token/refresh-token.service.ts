@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { RefreshTokenRepository } from './refresh-token.repository';
 import { RefreshTokenDocument } from './refresh-token.model';
+import { RefreshTokenRepository } from './refresh-token.repository';
 import { bcryptCompare, bcryptHash } from '@/common';
+import { Injectable } from '@nestjs/common';
 
 type ResponseRefreshToken = Omit<RefreshTokenDocument, '_id'> & { id: string };
 
@@ -18,7 +18,7 @@ export class RefreshTokenService {
     const tokenHash = await bcryptHash(token);
 
     const tokenDoc = await this.repository.createDocument({
-      userId: userId as any, // TODO фиксануть типизацию в baseRep
+      userId: userId as any,
       jti,
       tokenHash,
       expiresAt,
@@ -28,7 +28,7 @@ export class RefreshTokenService {
   }
 
   async findByJti(jti: string): Promise<ResponseRefreshToken | null> {
-    return this.repository.findByJti(jti)
+    return this.repository.findByJti(jti);
   }
 
   async verify(

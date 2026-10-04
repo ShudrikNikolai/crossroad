@@ -1,8 +1,8 @@
+import { NodeDocument, NodeModel } from './node.model';
+import { BaseModel, BaseRepository } from '@/common';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { NodeDocument, NodeModel } from './node.model';
-import { BaseModel, BaseRepository } from '@/common';
 
 @Injectable()
 export class NodeRepository extends BaseRepository<NodeDocument> {
@@ -10,43 +10,38 @@ export class NodeRepository extends BaseRepository<NodeDocument> {
     super(model);
   }
 
-  findAllByStory(sId: string) {
-    const storyId = this.toObjectId(sId);
-    return this.model.find({ storyId }).lean();
+  findAllByStory(storyId: string) {
+    return this.findManyLean({ storyId });
   }
 
-  findByStoryIdAndNode(sId: string, nodeId: string) {
-    const storyId = this.toObjectId(sId);
-    return this.model.findOne({ storyId, id: nodeId });
+  findBySource(storyId: string, source: string) {
+    return this.findManyLean({ storyId, source });
   }
 
   create(data: Omit<NodeModel, keyof BaseModel>) {
-    data.storyId = this.toObjectId(`${data.storyId}`);
-    return this.model.create(data);
+    return this.createDocument(data);
   }
 
   updatePosition(
-    sId: string,
+    storyId: string,
     nodeId: string,
     position: { x: number; y: number },
   ) {
-    const storyId = this.toObjectId(sId);
-    return this.model.updateOne({ storyId, id: nodeId }, { position });
+    return this.updateOne({ storyId, id: nodeId }, { position });
   }
 
+
   updateNode(
-    sId: string,
+    storyId: string,
     nodeId: string,
     data: Partial<Pick<NodeModel, 'type' | 'position' | 'content'>>,
   ) {
-    const storyId = this.toObjectId(sId);
     return this.model.findOneAndUpdate({ storyId, id: nodeId }, data, {
       new: true,
     });
   }
 
-  deleteOne(sId: string, nodeId: string) {
-    const storyId = this.toObjectId(sId);
-    return this.model.deleteOne({ storyId, id: nodeId });
+  deleteOne(sId: string, edgeId: string) {
+    return this.hardDeleteOne({ storyId: sId, id: edgeId });
   }
 }

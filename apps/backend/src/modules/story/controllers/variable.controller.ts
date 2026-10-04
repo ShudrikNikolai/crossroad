@@ -1,4 +1,11 @@
 import {
+  CreateVariableDto,
+  UpdateVariableDto,
+  VariableResponseDto,
+} from '../dtos';
+import { VariableService } from '../variable/variable.service';
+import { CurrentUser } from '@/common';
+import {
   Body,
   Controller,
   Delete,
@@ -13,13 +20,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { VariableService } from '../variable/variable.service';
-import {
-  CreateVariableDto,
-  UpdateVariableDto,
-  VariableResponseDto,
-} from '../dtos';
-import { CurrentUser } from '@/common';
 
 @ApiTags('story-variables')
 @ApiBearerAuth('access-token')

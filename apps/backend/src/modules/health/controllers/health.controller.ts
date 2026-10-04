@@ -1,3 +1,5 @@
+import { HealthService } from '../services/health.service';
+import { Public } from '@/common';
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
@@ -5,8 +7,6 @@ import {
   HealthCheckService,
   HttpHealthIndicator,
 } from '@nestjs/terminus';
-import { HealthService } from '../services/health.service';
-import { Public } from '@/common';
 
 @ApiTags('HEALTH')
 @Public()

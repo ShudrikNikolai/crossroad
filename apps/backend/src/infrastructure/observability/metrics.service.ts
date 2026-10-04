@@ -5,6 +5,26 @@ import { metrics } from '@opentelemetry/api';
 export class MetricsService {
   private readonly meter = metrics.getMeter('crossroad');
 
+  userRegistered(): void {
+    this.userRegisteredCounter.add(1);
+  }
+
+  storyPublished(): void {
+    this.storyPublishedCounter.add(1);
+  }
+
+  requestTimeout(route?: string): void {
+    this.requestTimeoutCounter.add(1, route ? { route } : undefined);
+  }
+
+  playthroughCompleted(storyId: string): void {
+    this.playthroughCompletedCounter.add(1, { storyId });
+  }
+
+  mediaUploadConfirmed(purpose: string): void {
+    this.mediaUploadConfirmedCounter.add(1, { purpose });
+  }
+
   private readonly requestTimeoutCounter = this.meter.createCounter(
     'crossroad.http.request.timeout',
     { description: 'Number of HTTP requests terminated by timeout' },
@@ -25,19 +45,8 @@ export class MetricsService {
     { description: 'Number of completed user registrations' },
   );
 
-  userRegistered(): void {
-    this.userRegisteredCounter.add(1);
-  }
-
-  requestTimeout(route?: string): void {
-    this.requestTimeoutCounter.add(1, route ? { route } : undefined);
-  }
-
-  playthroughCompleted(storyId: string): void {
-    this.playthroughCompletedCounter.add(1, { storyId });
-  }
-
-  mediaUploadConfirmed(purpose: string): void {
-    this.mediaUploadConfirmedCounter.add(1, { purpose });
-  }
+  private readonly storyPublishedCounter = this.meter.createCounter(
+    'crossroad.story.published',
+    { description: 'Number of stories published' },
+  );
 }

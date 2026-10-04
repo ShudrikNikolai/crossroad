@@ -1,8 +1,8 @@
+import { MediaDocument, MediaModel } from './media.model';
+import { BaseRepository } from '@/common';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { MediaDocument, MediaModel } from './media.model';
-import { BaseRepository } from '@/common';
 
 @Injectable()
 export class MediaRepository extends BaseRepository<MediaDocument> {
@@ -10,12 +10,8 @@ export class MediaRepository extends BaseRepository<MediaDocument> {
     super(model);
   }
 
-  findById(id: string) {
-    return this.model.findById(id);
-  }
-
   findByKey(key: string) {
-    return this.model.findOne({ key });
+    return this.findOne({ key });
   }
 
   create(
@@ -24,31 +20,25 @@ export class MediaRepository extends BaseRepository<MediaDocument> {
       'ownerId' | 'purpose' | 'storyId' | 'key' | 'contentType' | 'size'
     >,
   ) {
-    return this.model.create({ ...data, status: 'pending' });
+    return this.createDocument({ ...data, status: 'pending' });
   }
 
   markConfirmed(id: string) {
-    return this.model.findByIdAndUpdate(
-      id,
-      { status: 'confirmed' },
-      { new: true },
-    );
+    return this.updateById(id, { status: 'confirmed' });
   }
 
   deleteByKey(key: string) {
-    return this.model.deleteOne({ key });
+    return this.hardDeleteOne({ key });
   }
 
   findStalePending(olderThan: Date, limit: number) {
-    return this.model
-      .find({ status: 'pending', createdAt: { $lt: olderThan } })
-      .select({ key: 1 })
-      .limit(limit)
-      .lean();
+    return this.findManyLean(
+      { status: 'pending', createdAt: { $lt: olderThan } },
+      { select: { key: 1 }, limit },
+    );
   }
 
-  /** Условный delete: если запись успели подтвердить, она не удалится */
   deletePendingById(id: string) {
-    return this.model.deleteOne({ _id: id, status: 'pending' });
+    return this.hardDeleteOne({ _id: id, status: 'pending' });
   }
 }

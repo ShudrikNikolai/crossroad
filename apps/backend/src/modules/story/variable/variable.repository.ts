@@ -1,8 +1,8 @@
+import { VariableDocument, VariableModel } from './variable.model';
+import { BaseModel, BaseRepository } from '@/common';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { VariableDocument, VariableModel } from './variable.model';
-import { BaseModel, BaseRepository } from '@/common';
 
 @Injectable()
 export class VariableRepository extends BaseRepository<VariableDocument> {
@@ -16,24 +16,20 @@ export class VariableRepository extends BaseRepository<VariableDocument> {
   }
 
   create(data: Omit<VariableModel, keyof BaseModel>) {
-    const storyId = this.toObjectId(`${data.storyId}`);
-    data.storyId = storyId;
-    return this.model.create({
+    return this.createDocument({
       ...data,
     });
   }
 
   updateOneVariable(
-    sId: string,
+    storyId: string,
     key: string,
     data: Partial<Pick<VariableModel, 'type' | 'defaultValue'>>,
   ) {
-    const storyId = this.toObjectId(sId);
-    return this.model.findOneAndUpdate({ storyId, key }, data, { new: true });
+    return this.updateOne({ storyId, key }, data, { new: true });
   }
 
-  deleteOne(sId: string, key: string) {
-    const storyId = this.toObjectId(sId);
+  deleteOne(storyId: string, key: string) {
     return this.model.deleteOne({ storyId, key });
   }
 }

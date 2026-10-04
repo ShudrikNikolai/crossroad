@@ -1,3 +1,6 @@
+import { CreateEdgeDto, EdgeResponseDto, UpdateEdgeDto } from '../dtos';
+import { EdgeService } from '../edge/edge.service';
+import { CurrentUser } from '@/common';
 import {
   Body,
   Controller,
@@ -13,9 +16,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { EdgeService } from '../edge/edge.service';
-import { CreateEdgeDto, EdgeResponseDto, UpdateEdgeDto } from '../dtos';
-import { CurrentUser } from '@/common';
 
 @ApiTags('story-edges')
 @ApiBearerAuth('access-token')

@@ -41,6 +41,7 @@ import { MongooseModule } from '@nestjs/mongoose';
   controllers: [UserController, ProfileController, SecurityController],
   providers: [
     UserService,
+    UserFacade,
     UserRepository,
     ProfileService,
     ProfileRepository,

@@ -1,0 +1,49 @@
+# Dependencies
+**/node_modules
+node_modules
+
+# Build output
+**/dist
+**/.next
+**/out
+**/.turbo
+.turbo
+
+# Tests / coverage
+**/coverage
+**/.nyc_output
+
+# Environment
+**/.env
+**/.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Logs
+**/*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+**/Dockerfile*
+**/docker-compose*.yml
+**/docker-compose*.yaml
+
+# Temporary
+**/tmp
+**/temp
+**/.cache

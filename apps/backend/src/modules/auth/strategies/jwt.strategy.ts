@@ -1,17 +1,17 @@
+import { AUTH } from '../consts';
+import { JwtPayload } from '../interfaces';
+import { API_AUTH_ERROR } from '@/common';
 import { ConfigService } from '@/config';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { USER_PORT, type IUserAuthPort } from '@/modules/user/ports/user.port';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayload } from '../interfaces';
-import { UserAuthAdapter } from '../adapters/user.adapter';
-import { AUTH } from '../consts';
-import { API_AUTH_ERROR } from '@/common';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, AUTH.JWT) {
   constructor(
     private readonly configService: ConfigService,
-    private readonly userAdapter: UserAuthAdapter,
+    @Inject(USER_PORT) private readonly userService: IUserAuthPort,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, AUTH.JWT) {
   }
 
   async validate(payload: JwtPayload) {
-    const user = await this.userAdapter.findById(payload.sub);
+    const user = await this.userService.findById(payload.sub);
 
     if (!user) {
       throw new UnauthorizedException(API_AUTH_ERROR.USER_NOT_FOUND);

@@ -1,8 +1,8 @@
+import { StoryDocument, StoryModel } from './story.model';
+import { BaseRepository } from '@/common';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { StoryDocument, StoryModel } from './story.model';
-import { BaseRepository } from '@/common';
 
 @Injectable()
 export class StoryRepository extends BaseRepository<StoryDocument> {
@@ -22,14 +22,14 @@ export class StoryRepository extends BaseRepository<StoryDocument> {
     id: string,
     data: Partial<Pick<StoryModel, 'title' | 'description' | 'startNodeId'>>,
   ) {
-    return this.model.findByIdAndUpdate(id, data, { new: true });
+    return super.updateById(id, data);
   }
 
-  setStatus(id: string, status: StoryModel['status']) {
-    return this.model.findByIdAndUpdate(id, { status }, { new: true });
+  setStatus(id: string, status: keyof StoryModel['status']) {
+    return super.updateById(id, { status });
   }
 
   deleteById(id: string) {
-    return this.model.findByIdAndDelete(id);
+    return this.softDeleteById(id);
   }
 }

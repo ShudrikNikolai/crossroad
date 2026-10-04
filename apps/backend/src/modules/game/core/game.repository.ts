@@ -1,26 +1,25 @@
+import { PlaythroughDocument, PlaythroughModel } from './game.model';
+import { BaseRepository } from '@/common';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PlaythroughDocument, PlaythroughModel } from './game.model';
 
 @Injectable()
-export class PlaythroughRepository {
+export class PlaythroughRepository extends BaseRepository<PlaythroughDocument> {
   constructor(
     @InjectModel(PlaythroughModel.name)
-    private model: Model<PlaythroughDocument>,
-  ) {}
-
-  findById(id: string) {
-    return this.model.findById(id);
+    model: Model<PlaythroughDocument>,
+  ) {
+    super(model);
   }
 
-  create(
+  createPlaythrough(
     data: Pick<
       PlaythroughModel,
       'userId' | 'storyId' | 'currentNodeId' | 'variables' | 'status'
     >,
   ) {
-    return this.model.create({ ...data, history: [] });
+    return this.createDocument({ ...data, history: [] });
   }
 
   updateState(
@@ -32,15 +31,11 @@ export class PlaythroughRepository {
       traversedEdgeId: string;
     },
   ) {
-    return this.model.findByIdAndUpdate(
-      id,
-      {
-        currentNodeId: data.currentNodeId,
-        status: data.status,
-        ...(data.variables && { variables: data.variables }),
-        $push: { history: data.traversedEdgeId },
-      },
-      { new: true },
-    );
+    return this.updateById(id, {
+      currentNodeId: data.currentNodeId,
+      status: data.status,
+      ...(data.variables && { variables: data.variables }),
+      $push: { history: data.traversedEdgeId },
+    });
   }
 }

@@ -1,5 +1,5 @@
-import type { CookieOptions } from 'express';
 import { AUTH } from './env.const';
+import type { CookieOptions } from 'express';
 
 export const REFRESH_COOKIE_NAME = AUTH.REFRESH_TOKEN;
 

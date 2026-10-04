@@ -1,4 +1,12 @@
 import {
+  CreateNodeDto,
+  NodeResponseDto,
+  UpdateNodeDto,
+  UpdateNodePositionDto,
+} from '../dtos';
+import { NodeService } from '../node/node.service';
+import { CurrentUser } from '@/common';
+import {
   Body,
   Controller,
   Delete,
@@ -13,14 +21,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { NodeService } from '../node/node.service';
-import {
-  CreateNodeDto,
-  NodeResponseDto,
-  UpdateNodeDto,
-  UpdateNodePositionDto,
-} from '../dtos';
-import { CurrentUser } from '@/common';
 
 @ApiTags('story-nodes')
 @ApiBearerAuth('access-token')
@@ -43,6 +43,7 @@ export class NodeController {
     @CurrentUser('id') authorId: string,
     @Body() data: CreateNodeDto,
   ) {
+    console.log('AAAAAAAAAAAA >>>', {authorId, storyId, data})
     return this.nodeService.create(authorId, { ...data, storyId });
   }
 

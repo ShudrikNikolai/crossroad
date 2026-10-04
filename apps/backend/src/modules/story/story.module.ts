@@ -1,7 +1,3 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { StoryFacade } from './facades/story.facade';
-import { STORY_PORT } from './ports/story.port';
 import {
   EdgeController,
   NodeController,
@@ -9,14 +5,18 @@ import {
   VariableController,
 } from './controllers';
 import { StoryModel, StoryRepository, StorySchema, StoryService } from './core';
-import { NodeModel, NodeRepository, NodeSchema, NodeService } from './node';
 import { EdgeModel, EdgeRepository, EdgeSchema, EdgeService } from './edge';
+import { StoryFacade } from './facades/story.facade';
+import { NodeModel, NodeRepository, NodeSchema, NodeService } from './node';
+import { STORY_PORT } from './ports/story.port';
 import {
   VariableModel,
   VariableRepository,
   VariableSchema,
   VariableService,
 } from './variable';
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [

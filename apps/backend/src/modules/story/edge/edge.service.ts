@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { EdgeRepository } from './edge.repository';
 import { StoryService } from '../core/story.service';
+import { EdgeRepository } from './edge.repository';
 import type { TCreateEdgeSchema, TUpdateEdgeSchema } from '@crossroad/schemas';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class EdgeService {
@@ -18,11 +18,7 @@ export class EdgeService {
     await this.storyService.assertEditable(storyId, authorId);
     return this.edgeRepository.create({
       storyId: storyId as any,
-      id: data.id,
-      source: data.source,
-      target: data.target,
-      label: data.label,
-      conditions: data.conditions,
+      ...data,
     });
   }
 

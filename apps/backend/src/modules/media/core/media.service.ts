@@ -1,4 +1,23 @@
 import {
+  EXTENSION_BY_CONTENT_TYPE,
+  MEDIA_RULES,
+  MEDIA_URL_TTL_SECONDS,
+  UPLOAD_URL_TTL_SECONDS,
+} from '../consts';
+import type { IMediaPort } from '../ports/media.port';
+import type { MediaDocument } from './media.model';
+import { MediaRepository } from './media.repository';
+import { API_MEDIA_ERROR } from '@/common';
+import { Trace } from '@/infrastructure/observability/decorators/trace.decorator';
+import { MetricsService } from '@/infrastructure/observability/metrics.service';
+import { StorageService } from '@/infrastructure/storage/storage.service';
+import { type IStoryPort, STORY_PORT } from '@/modules/story/ports/story.port';
+import type {
+  TCreateUploadUrlSchema,
+  TMediaResponse,
+  TUploadUrlResponse,
+} from '@crossroad/schemas';
+import {
   BadRequestException,
   ForbiddenException,
   Inject,
@@ -6,29 +25,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { MediaRepository } from './media.repository';
-import { StorageService } from '@/infrastructure/storage/storage.service';
-import { type IStoryPort, STORY_PORT } from '@/modules/story/ports/story.port';
-import type { IMediaPort } from '../ports/media.port';
-import {
-  EXTENSION_BY_CONTENT_TYPE,
-  MEDIA_RULES,
-  MEDIA_URL_TTL_SECONDS,
-  UPLOAD_URL_TTL_SECONDS,
-} from '../consts';
-import type {
-  TCreateUploadUrlSchema,
-  TMediaResponse,
-  TUploadUrlResponse,
-} from '@crossroad/schemas';
-import { API_MEDIA_ERROR } from '@/common';
-import type { MediaDocument } from './media.model';
+
 @Injectable()
 export class MediaService implements IMediaPort {
   constructor(
     private readonly mediaRepository: MediaRepository,
     private readonly storageService: StorageService,
     @Inject(STORY_PORT) private readonly storyPort: IStoryPort,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async createUploadUrl(
@@ -72,6 +76,7 @@ export class MediaService implements IMediaPort {
     };
   }
 
+  @Trace('MediaService.confirm')
   async confirm(userId: string, mediaId: string): Promise<TMediaResponse> {
     let media = await this.mediaRepository.findById(mediaId);
     if (!media) throw new NotFoundException(API_MEDIA_ERROR.NOT_FOUND);
@@ -83,6 +88,8 @@ export class MediaService implements IMediaPort {
       if (!uploaded)
         throw new BadRequestException(API_MEDIA_ERROR.UPLOAD_NOT_FOUND);
       media = (await this.mediaRepository.markConfirmed(mediaId))!;
+      this.metricsService.mediaUploadConfirmed(media.purpose); // метрика только на реальном подтверждении,
+      // не на повторном вызове идемпотентной ветки
     }
 
     return this.toResponse(media);

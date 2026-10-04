@@ -1,4 +1,15 @@
 import {
+  //GAME_EVENTS,
+  PUBLISHED_GRAPH_CACHE_PREFIX,
+  PUBLISHED_GRAPH_CACHE_TTL_SECONDS,
+} from '../consts';
+import { evaluateConditions } from '../utils/evaluate-condition.util';
+import { PlaythroughRepository } from './game.repository';
+import { EventService } from '@/infrastructure/event/event.service';
+import { RedisService } from '@/infrastructure/redis/redis.service';
+import { type IStoryPort, STORY_PORT } from '@/modules/story/ports/story.port';
+import type { TGameStepResponse, TPlaythroughStatus } from '@crossroad/schemas';
+import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
@@ -6,17 +17,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PlaythroughRepository } from './game.repository';
-import { type IStoryPort, STORY_PORT } from '@/modules/story/ports/story.port';
-import { RedisService } from '@/infrastructure/redis/redis.service';
-import { EventService } from '@/infrastructure/event/event.service';
-import { evaluateConditions } from '../utils/evaluate-condition.util';
-import {
-  //GAME_EVENTS,
-  PUBLISHED_GRAPH_CACHE_PREFIX,
-  PUBLISHED_GRAPH_CACHE_TTL_SECONDS,
-} from '../consts';
-import type { TGameStepResponse, TPlaythroughStatus } from '@crossroad/schemas';
 
 type PublishedGraph = NonNullable<
   Awaited<ReturnType<IStoryPort['getPublishedGraph']>>
@@ -32,17 +32,21 @@ export class GameService {
   ) {}
 
   async start(userId: string, storyId: string): Promise<TGameStepResponse> {
+    console.log('XZSSTATET >>>')
+
     const graph = await this.getPublishedGraph(storyId);
-
+    console.log('graph >>>', graph)
     const variables = this.buildInitialVariables(graph);
+    console.log('variables >>>', variables)
 
-    const playthrough = await this.playthroughRepository.create({
+    const playthrough = await this.playthroughRepository.createDocument({
       userId: userId as any,
       storyId: storyId as any,
       currentNodeId: graph.story.startNodeId,
       variables,
       status: 'in_progress',
     });
+    console.log('playthrough >>>', playthrough)
 
     return this.buildStepResponse(playthrough, graph);
   }
@@ -126,13 +130,17 @@ export class GameService {
 
   private async getPublishedGraph(storyId: string): Promise<PublishedGraph> {
     const cacheKey = `${PUBLISHED_GRAPH_CACHE_PREFIX}${storyId}`;
-
+    console.log('redis >>>')
     const cached = await this.redisService.get(cacheKey);
     if (cached) return JSON.parse(`${cached}`) as PublishedGraph; // TODO
+    console.log('cached >>>')
 
     const graph = await this.storyPort.getPublishedGraph(storyId);
+    console.log('graph #>>>', graph)
+
     if (!graph)
       throw new NotFoundException('API_GAME_ERROR.STORY_NOT_PUBLISHED');
+    console.log('cached #>>>')
 
     await this.redisService.set(
       cacheKey,

@@ -1,3 +1,14 @@
+import { getRefreshCookieOptions, REFRESH_COOKIE_NAME } from '../consts';
+import { AuthService } from '../core/auth.service';
+import {
+  AuthResponseDto,
+  LoginDto,
+  RefreshTokenDto,
+  RegisterUserDto,
+} from '../dtos';
+import { RefreshTokenGuard } from '../guards';
+import { CurrentUser, Public } from '@/common';
+import { ConfigService } from '@/config';
 import {
   Body,
   Controller,
@@ -14,17 +25,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import type { Response } from 'express';
-import { AuthService } from '../services/auth.service';
-import { RefreshTokenGuard } from '../guards';
-import {
-  AuthResponseDto,
-  LoginDto,
-  RefreshTokenDto,
-  RegisterUserDto,
-} from '../dtos';
-import { CurrentUser, Public } from '@/common';
-import { ConfigService } from '@/config';
-import { getRefreshCookieOptions, REFRESH_COOKIE_NAME } from '../consts';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -62,6 +62,7 @@ export class AuthController {
 
   @Public()
   @UseGuards(RefreshTokenGuard)
+  @ApiBearerAuth('refresh-token')
   @Post('refresh')
   @ApiOperation({ summary: 'Exchange a refresh token for a new access token' })
   @ApiOkResponse({ type: AuthResponseDto })

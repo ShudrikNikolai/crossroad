@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
 import { StoryService } from '../core/story.service';
+import { VariableRepository } from './variable.repository';
 import type {
   TCreateVariableSchema,
   TUpdateVariableSchema,
 } from '@crossroad/schemas';
-import { VariableRepository } from './variable.repository';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class VariableService {
@@ -21,9 +21,7 @@ export class VariableService {
     await this.storyService.assertEditable(storyId, authorId);
     return this.variableRepository.create({
       storyId: storyId as any,
-      key: data.key,
-      type: data.type,
-      defaultValue: data.defaultValue,
+      ...data,
     });
   }
 
